@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.mapUpdater.update;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
@@ -62,7 +63,7 @@ public class BlockCreateCommand extends UpdateCommand {
         // now do the block updates, move entities when you set the block they are on
         Movecraft.getInstance().getWorldHandler().setBlockFast(newBlockLocation.toBukkit(world),type, Settings.IsLegacy ? dataID : bData);
         //craft.incrementBlockUpdates();
-        newBlockLocation.toBukkit(world).getBlock().getState().update(false, false);
+        PaperLib.getBlockState(newBlockLocation.toBukkit(world).getBlock(), false).getState().update(false, false);
 
         //Do comperator stuff
         if (Settings.IsLegacy) {

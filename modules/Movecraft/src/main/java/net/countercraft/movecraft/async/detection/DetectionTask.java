@@ -18,6 +18,7 @@
 package net.countercraft.movecraft.async.detection;
 
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftBlock;
 import net.countercraft.movecraft.MovecraftLocation;
@@ -139,7 +140,7 @@ public class DetectionTask extends AsyncTask {
                 waterContact = true;
             }
             if (testType.name().endsWith("SIGN") || testType == LegacyUtils.SIGN_POST) {
-                Sign sign = Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), () -> (Sign) testBlock.getState()).get();
+                Sign sign = Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), () -> (Sign) PaperLib.getBlockState(testBlock, false).getState()).get();
                 if (sign.getLine(0).equalsIgnoreCase("Pilot:") && player != null) {
                     String playerName = player.getName();
                     boolean foundPilot = false;

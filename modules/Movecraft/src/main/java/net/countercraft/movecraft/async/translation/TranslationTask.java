@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.async.translation;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftChunk;
 import net.countercraft.movecraft.MovecraftLocation;
@@ -17,6 +18,7 @@ import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Orientable;
@@ -545,7 +547,7 @@ public class TranslationTask extends AsyncTask {
             for (MovecraftLocation loc : oldHitBox) {
                 Block block = craft.getWorld().getBlockAt(loc.getX(), loc.getY(), loc.getZ());
                 if (block.getType() == Material.CHEST || block.getType() == Material.TRAPPED_CHEST)
-                    chests.add(((InventoryHolder) (block.getState())).getInventory());
+                    chests.add(((InventoryHolder) (PaperLib.getBlockState(block, false).getState())).getInventory());
             }
 
             for (MovecraftLocation harvestedBlock : harvestedBlocks) {
@@ -575,13 +577,14 @@ public class TranslationTask extends AsyncTask {
                 }
                 //get contents of inventories before deposting
 
-                if (block.getState() instanceof InventoryHolder) {
-                    if (block.getState() instanceof Chest) {
-                        drops.addAll(Arrays.asList(((Chest) block.getState()).getBlockInventory().getContents()));
-                    } else if (block.getState() instanceof Barrel) {
-                        drops.addAll(Arrays.asList(((Barrel) block.getState()).getInventory().getContents()));
+                BlockState state = PaperLib.getBlockState(block, false).getState();
+                if (state instanceof InventoryHolder) {
+                    if (state instanceof Chest) {
+                        drops.addAll(Arrays.asList(((Chest) state).getBlockInventory().getContents()));
+                    } else if (state instanceof Barrel) {
+                        drops.addAll(Arrays.asList(((Barrel) state).getInventory().getContents()));
                     } else {
-                        drops.addAll(Arrays.asList((((InventoryHolder) block.getState()).getInventory().getContents())));
+                        drops.addAll(Arrays.asList((((InventoryHolder) state).getInventory().getContents())));
                     }
                 }
                 //call event

@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.events.CraftDetectEvent;
@@ -22,7 +23,7 @@ public class ContactsSign implements Listener{
             if(!SignUtils.isSign(block)){
                 continue;
             }
-            Sign sign = (Sign) block.getState();
+            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Contacts:")) {
                 sign.setLine(1, "");
                 sign.setLine(2, "");

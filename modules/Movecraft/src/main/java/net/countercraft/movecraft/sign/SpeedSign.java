@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -29,7 +30,7 @@ public final class SpeedSign implements Listener{
             if(!SignUtils.isSign(block)) {
                 return;
             }
-            Sign sign = (Sign) block.getState();
+            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Speed:")) {
                 sign.setLine(1, "0 m/s");
                 sign.setLine(2, "0ms");
@@ -59,7 +60,7 @@ public final class SpeedSign implements Listener{
         if (block == null || block.getType().name().endsWith("SIGN") || block.getType().name().startsWith("SIGN_")) {
             return;
         }
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Speed:")) {
             return;
         }

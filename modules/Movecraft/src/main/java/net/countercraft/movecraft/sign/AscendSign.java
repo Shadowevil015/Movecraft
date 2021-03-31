@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -26,7 +27,7 @@ public class AscendSign implements Listener {
             if(!SignUtils.isSign(block)){
                 return;
             }
-            Sign sign = (Sign) block.getState();
+            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: ON")) {
                 sign.setLine(0, "Ascend: OFF");
                 sign.update();
@@ -44,7 +45,7 @@ public class AscendSign implements Listener {
         if (!SignUtils.isSign(block)){
             return;
         }
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) PaperLib.getBlockState(event.getClickedBlock(), false).getState();
         if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: OFF")) {
             if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
                 return;

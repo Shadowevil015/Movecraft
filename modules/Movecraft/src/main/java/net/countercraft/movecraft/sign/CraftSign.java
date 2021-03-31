@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
@@ -53,7 +54,7 @@ public final class CraftSign implements Listener{
         if (!SignUtils.isSign(block)) {
             return;
         }
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         CraftType type = CraftManager.getInstance().getCraftTypeFromString(ChatColor.stripColor(sign.getLine(0)));
         if (type == null) {
             return;
@@ -70,7 +71,7 @@ public final class CraftSign implements Listener{
 
         if (c.getType().getCruiseOnPilot()) {
             c.detect(null, event.getPlayer(), startPoint);
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) block.getState().getData();
+            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) PaperLib.getBlockState(block, false).getState().getData();
             if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
                 c.setCruiseDirection(CruiseDirection.NONE);
             else

@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
@@ -32,7 +33,7 @@ public final class CruiseSign implements Listener{
             if(!SignUtils.isSign(block)){
                 return;
             }
-            Sign sign = (Sign) block.getState();
+            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: ON")) {
                 sign.setLine(0, "Cruise: OFF");
                 sign.update();
@@ -49,7 +50,7 @@ public final class CruiseSign implements Listener{
         if (!SignUtils.isSign(block)) {
             return;
         }
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: OFF")) {
             if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
@@ -64,7 +65,7 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) block.getState().getData();
+            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) sign.getData();
             if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
                 c.setCruiseDirection(CruiseDirection.NONE);
             else

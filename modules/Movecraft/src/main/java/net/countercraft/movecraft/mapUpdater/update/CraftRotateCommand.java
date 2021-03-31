@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.mapUpdater.update;
 
+import io.papermc.lib.PaperLib;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
@@ -276,10 +277,11 @@ public class CraftRotateCommand extends UpdateCommand {
         for (MovecraftLocation location : craft.getHitBox()) {
             Block block = location.toBukkit(craft.getWorld()).getBlock();
             if (SignUtils.isSign(block)) {
-                Sign sign = (Sign) block.getState();
-                if(!signs.containsKey(sign.getLines()))
-                    signs.put(sign.getLines(), new ArrayList<>());
-                signs.get(sign.getLines()).add(location);
+                Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
+                String[] lines = sign.getLines();
+                if(!signs.containsKey(lines))
+                    signs.put(lines, new ArrayList<>());
+                signs.get(lines).add(location);
                 signStates.put(location, sign);
             }
         }

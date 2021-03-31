@@ -17,6 +17,7 @@
 
 package net.countercraft.movecraft.listener;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -25,6 +26,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.LegacyUtils;
 import net.countercraft.movecraft.utils.MathUtils;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -60,8 +62,9 @@ public final class InteractListener implements Listener {
                 LegacyUtils.setData(event.getClickedBlock(), (byte) (event.getClickedBlock().getData() - 8));
             }
         } else {
-            if (event.getClickedBlock().getState() instanceof Button) {
-                Button button = (Button) event.getClickedBlock().getState();
+            BlockState state = PaperLib.getBlockState(event.getClickedBlock(), false).getState();
+            if (state instanceof Button) {
+                Button button = (Button) state;
                 if (button.isPowered()) {
                     button.setPowered(false);
                 }

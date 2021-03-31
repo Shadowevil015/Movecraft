@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
@@ -32,7 +33,7 @@ public final class StatusSign implements Listener{
             if(!SignUtils.isSign(block)){
                 return;
             }
-            Sign sign = (Sign) block.getState();
+            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Status:")) {
                 sign.setLine(1, "");
                 sign.setLine(2, "");
@@ -56,7 +57,7 @@ public final class StatusSign implements Listener{
             foundBlocks.add(blockID);
 
             if (blockID == Material.FURNACE) {
-                InventoryHolder inventoryHolder = (InventoryHolder) craft.getW().getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getState();
+                InventoryHolder inventoryHolder = (InventoryHolder) PaperLib.getBlockState(craft.getW().getBlockAt(ml.getX(), ml.getY(), ml.getZ()), false).getState();
                 Map<Material, Double> fuelTypes = craft.getType().getFuelTypes();
                 for (ItemStack iStack : inventoryHolder.getInventory()) {
                     if (iStack == null || !fuelTypes.containsKey(iStack.getType())) {

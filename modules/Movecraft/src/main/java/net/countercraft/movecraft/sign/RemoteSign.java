@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.sign;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
@@ -11,6 +12,7 @@ import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -59,7 +61,7 @@ public final class RemoteSign implements Listener{
         if (!SignUtils.isSign(block)) {
             return;
         }
-        Sign sign = (Sign) event.getClickedBlock().getState();
+        Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase(HEADER)) {
             return;
         }
@@ -102,10 +104,10 @@ public final class RemoteSign implements Listener{
         boolean firstError = true;
         for (MovecraftLocation tloc : foundCraft.getHitBox()) {
             Block tb = event.getClickedBlock().getWorld().getBlockAt(tloc.getX(), tloc.getY(), tloc.getZ());
-            if (!(tb.getState() instanceof Sign)) {
+            if (!(PaperLib.getBlockState(tb, false).getState() instanceof Sign)) {
                 continue;
             }
-            Sign ts = (Sign) tb.getState();
+            Sign ts = (Sign) PaperLib.getBlockState(tb, false).getState();
             if (isEqualSign(ts, targetText)) {
                 if (isForbidden(ts)) {
                     if (firstError) {
@@ -132,7 +134,7 @@ public final class RemoteSign implements Listener{
             public void run() {
                 MovecraftLocation foundLoc = foundLocations.poll();
                 Block newBlock = event.getClickedBlock().getWorld().getBlockAt(foundLoc.getX(), foundLoc.getY(), foundLoc.getZ());
-                Sign foundSign = (Sign) newBlock.getState();
+                Sign foundSign = (Sign) PaperLib.getBlockState(newBlock, false).getState();
                 boolean inverted = false;//set to true if target name has an ! in front of the text
                 //check Remote sign if the target strings are inverted
                 for (String line : foundSign.getLines()){

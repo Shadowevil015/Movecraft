@@ -17,6 +17,7 @@
 
 package net.countercraft.movecraft.async;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -80,7 +81,7 @@ public abstract class AsyncTask extends BukkitRunnable {
                     if (b.getType() != Material.FURNACE) {
                         continue;
                     }
-                    InventoryHolder inventoryHolder = (InventoryHolder) b.getState();
+                    InventoryHolder inventoryHolder = (InventoryHolder) PaperLib.getBlockState(b, false).getState();
                     for (ItemStack stack : inventoryHolder.getInventory()) {
                         if (stack == null || !craft.getType().getFuelTypes().containsKey(stack.getType()))
                             continue;

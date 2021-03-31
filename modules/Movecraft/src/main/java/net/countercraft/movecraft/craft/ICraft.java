@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.craft;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.Rotation;
@@ -113,10 +114,10 @@ public class ICraft extends Craft {
     public void resetSigns(@NotNull Sign clicked) {
         for (final MovecraftLocation ml : hitBox) {
             final Block b = ml.toBukkit(world).getBlock();
-            if (!(b.getState() instanceof Sign)) {
+            if (!(PaperLib.getBlockState(b, false).getState() instanceof Sign)) {
                 continue;
             }
-            final Sign sign = (Sign) b.getState();
+            final Sign sign = (Sign) PaperLib.getBlockState(b, false).getState();
             if (sign.equals(clicked)) {
                 continue;
             }

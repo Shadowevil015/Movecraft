@@ -17,6 +17,7 @@
 
 package net.countercraft.movecraft.listener;
 
+import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
@@ -47,7 +48,7 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(final BlockBreakEvent e) {
         if (e.getBlock().getType().name().endsWith("WALL_SIGN")) {
-            Sign s = (Sign) e.getBlock().getState();
+            Sign s = (Sign) PaperLib.getBlockState(e.getBlock(), false).getState();
             if (s.getLine(0).equalsIgnoreCase(ChatColor.RED + "REGION DAMAGED!")) {
                 e.setCancelled(true);
                 return;
