@@ -23,11 +23,12 @@ import net.countercraft.movecraft.craft.Craft;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class MathUtils {
+
+
 
     /**
      * checks if <code>location</code> is within the bounding box <code>box</code> restricted by minimum values on x and z
