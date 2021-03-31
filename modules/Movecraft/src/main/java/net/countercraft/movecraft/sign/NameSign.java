@@ -20,30 +20,7 @@ import java.util.stream.Collectors;
 
 public final class NameSign implements Listener {
     private static final String HEADER = "Name:";
-    @EventHandler
-    public void onCraftDetect(@NotNull CraftDetectEvent event) {
-        Craft c = event.getCraft();
 
-        if(c.getNotificationPlayer() == null || (Settings.RequireNamePerm && !c.getNotificationPlayer().hasPermission("movecraft.name.use"))) {
-            //Player is null or does not have permission (when required)
-            return;
-        }
-
-        World w = c.getWorld();
-
-        for (MovecraftLocation location : c.getHitBox()) {
-            Block b = location.toBukkit(w).getBlock();
-            if (!SignUtils.isSign(b)) {
-                continue;
-            }
-            Sign s = (Sign) PaperLib.getBlockState(b, false).getState();
-            if (s.getLine(0).equalsIgnoreCase(HEADER)) {
-                String name = Arrays.stream(s.getLines()).skip(1).filter(f -> f != null && !f.trim().isEmpty()).collect(Collectors.joining(" "));
-                c.setName(name);
-                return;
-            }
-        }
-    }
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if (event.getLine(0).equalsIgnoreCase(HEADER) && Settings.RequireNamePerm && !event.getPlayer().hasPermission("movecraft.name.place")) {

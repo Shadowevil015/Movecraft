@@ -251,6 +251,7 @@ public class Movecraft extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new StatusSign(), this);
             getServer().getPluginManager().registerEvents(new SubcraftRotateSign(), this);
             getServer().getPluginManager().registerEvents(new TeleportSign(), this);
+            getServer().getPluginManager().registerEvents(new SignDetectionListener(), this);
 
             //Start the update manager
             UpdateManager.getInstance();

@@ -16,24 +16,6 @@ import org.bukkit.event.Listener;
 public class ContactsSign implements Listener{
 
     @EventHandler
-    public void onCraftDetect(CraftDetectEvent event){
-        World world = event.getCraft().getWorld();
-        for(MovecraftLocation location: event.getCraft().getHitBox()){
-            Block block = location.toBukkit(world).getBlock();
-            if(!SignUtils.isSign(block)){
-                continue;
-            }
-            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
-            if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Contacts:")) {
-                sign.setLine(1, "");
-                sign.setLine(2, "");
-                sign.setLine(3, "");
-                sign.update();
-            }
-        }
-    }
-
-    @EventHandler
     public final void onSignTranslateEvent(SignTranslateEvent event){
         String[] lines = event.getLines();
         Craft craft = event.getCraft();

@@ -26,22 +26,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public final class CruiseSign implements Listener{
 
     @EventHandler
-    public void onCraftDetect(CraftDetectEvent event){
-        World world = event.getCraft().getWorld();
-        for(MovecraftLocation location: event.getCraft().getHitBox()){
-            Block block = location.toBukkit(world).getBlock();
-            if(!SignUtils.isSign(block)){
-                return;
-            }
-            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
-            if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: ON")) {
-                sign.setLine(0, "Cruise: OFF");
-                sign.update();
-            }
-        }
-    }
-
-    @EventHandler
     public final void onSignClick(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
