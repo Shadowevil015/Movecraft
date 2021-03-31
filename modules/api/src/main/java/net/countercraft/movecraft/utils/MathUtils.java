@@ -29,11 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MathUtils {
 
-
-
-    public static Vector we6vectorToBukkitVector(com.sk89q.worldedit.Vector weVector){
-        return new Vector(weVector.getBlockX(), weVector.getBlockY(), weVector.getBlockZ());
-    }
     /**
      * checks if <code>location</code> is within the bounding box <code>box</code> restricted by minimum values on x and z
      * @param box the bounding box to check within
