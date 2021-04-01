@@ -73,9 +73,9 @@ public final class CraftSign implements Listener{
             c.detect(null, event.getPlayer(), startPoint);
             org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) PaperLib.getBlockState(block, false).getState().getData();
             if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
-                c.setCruiseDirection(CruiseDirection.NONE);
-            else
                 c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
+            else
+                c.setCruiseDirection(CruiseDirection.NONE);
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
             new BukkitRunnable() {
