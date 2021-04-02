@@ -187,7 +187,7 @@ public final class InteractListener implements Listener {
                 craft.setPilotLocked(false);
                 event.getPlayer().sendMessage(
                         I18nSupport.getInternationalisedString("Direct Control - Leaving"));
-            } else {
+            } else if (craft.getType().getCanDirectControl()) {
                 craft.setPilotLocked(true);
                 event.getPlayer().sendMessage(
                         I18nSupport.getInternationalisedString("Direct Control - Entering"));
