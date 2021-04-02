@@ -51,9 +51,10 @@ public final class CruiseSign implements Listener{
 
             org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) sign.getData();
             if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
-                c.setCruiseDirection(CruiseDirection.NONE);
-            else
                 c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
+            else
+                c.setCruiseDirection(CruiseDirection.NONE);
+
 
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
