@@ -13,7 +13,6 @@ import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +36,7 @@ public final class CruiseSign implements Listener{
         Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: OFF")) {
-            if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
+            if (c == null) {
                 return;
             }
 
@@ -49,11 +48,11 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) sign.getData();
-            if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
-                c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
-            else
+            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) block.getState().getData();
+            if(!block.getType().name().endsWith("SIGN") && block.getType() != LegacyUtils.SIGN_POST)
                 c.setCruiseDirection(CruiseDirection.NONE);
+            else
+                c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
 
 
             c.setLastCruiseUpdate(System.currentTimeMillis());

@@ -83,6 +83,5 @@ public final class SpeedSign implements Listener{
             currentGear = 1;
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(I18nSupport.getInternationalisedString("Gearshift - Gear changed") + " " + currentGear + " / " + gearShifts));
         craft.setCurrentGear(currentGear);
-        return;
     }
 }
