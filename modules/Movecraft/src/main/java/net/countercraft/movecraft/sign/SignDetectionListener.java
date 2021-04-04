@@ -28,19 +28,24 @@ public class SignDetectionListener implements Listener {
             Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
             switch (sign.getLine(0).toUpperCase()) {
                 case "CONTACTS:":
+                case "STATUS":
                     sign.setLine(1, "");
                     sign.setLine(2, "");
                     sign.setLine(3, "");
                     sign.update();
+                    break;
                 case "ASCEND: ON":
                     sign.setLine(0, "Ascend: OFF");
                     sign.update();
+                    break;
                 case "CRUISE: ON":
                     sign.setLine(0, "Cruise: OFF");
                     sign.update();
+                    break;
                 case "DESCEND: ON":
                     sign.setLine(0, "Descend: OFF");
                     sign.update();
+                    break;
                 case "NAME:":
                     String name = Arrays.stream(sign.getLines()).skip(1).filter(f -> f != null && !f.trim().isEmpty()).collect(Collectors.joining(" "));
                     Player player = event.getCraft().getNotificationPlayer();
@@ -48,11 +53,7 @@ public class SignDetectionListener implements Listener {
                         continue;
                     }
                     event.getCraft().setName(name);
-                case "STATUS":
-                    sign.setLine(1, "");
-                    sign.setLine(2, "");
-                    sign.setLine(3, "");
-                    sign.update();
+                    break;
                 default:
                     continue;
             }
