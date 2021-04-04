@@ -133,6 +133,9 @@ public final class RemoteSign implements Listener{
             @Override
             public void run() {
                 MovecraftLocation foundLoc = foundLocations.poll();
+                if (foundLoc == null) {
+                    return;
+                }
                 Block newBlock = event.getClickedBlock().getWorld().getBlockAt(foundLoc.getX(), foundLoc.getY(), foundLoc.getZ());
                 Sign foundSign = (Sign) PaperLib.getBlockState(newBlock, false).getState();
                 boolean inverted = false;//set to true if target name has an ! in front of the text
