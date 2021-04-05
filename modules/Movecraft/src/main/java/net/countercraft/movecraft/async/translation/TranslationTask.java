@@ -64,6 +64,7 @@ public class TranslationTask extends AsyncTask {
         FALL_THROUGH_BLOCKS.add(Material.REDSTONE_WIRE);
         FALL_THROUGH_BLOCKS.add(Material.LADDER);
         if (Settings.is1_14){
+            FALL_THROUGH_BLOCKS.add(Material.CAVE_AIR);
             FALL_THROUGH_BLOCKS.add(Material.BIRCH_SIGN);
             FALL_THROUGH_BLOCKS.add(Material.OAK_SIGN);
             FALL_THROUGH_BLOCKS.add(Material.DARK_OAK_SIGN);
@@ -339,7 +340,7 @@ public class TranslationTask extends AsyncTask {
 
             boolean ignoreBlock = false;
             // air never obstructs anything (changed 4/18/2017 to prevent drilling machines)
-            if (oldLocation.toBukkit(craft.getWorld()).getBlock().getType().equals(Material.AIR) && blockObstructed) {
+            if (oldLocation.toBukkit(craft.getWorld()).getBlock().getType().isAir() && blockObstructed) {
                 ignoreBlock = true;
             }
 
@@ -375,7 +376,7 @@ public class TranslationTask extends AsyncTask {
         if (craft.getType().getForbiddenHoverOverBlocks().size() > 0){
             MovecraftLocation test = new MovecraftLocation(newHitBox.getMidPoint().getX(), newHitBox.getMinY(), newHitBox.getMidPoint().getZ());
             test = test.translate(0, -1, 0);
-            while (test.toBukkit(world).getBlock().getType() == Material.AIR){
+            while (test.toBukkit(world).getBlock().getType().isAir()){
                 test = test.translate(0, -1, 0);
             }
             Material testType = test.toBukkit(world).getBlock().getType();
@@ -395,7 +396,7 @@ public class TranslationTask extends AsyncTask {
         if(craft.getSinking()){
             List<MovecraftLocation> air = new ArrayList<>();
             for(MovecraftLocation location: oldHitBox){
-                if(location.toBukkit(craft.getWorld()).getBlock().getType() == Material.AIR){
+                if(location.toBukkit(craft.getWorld()).getBlock().getType().isAir()){
                     air.add(location.translate(dx,dy,dz));
                 }
             }
@@ -406,7 +407,7 @@ public class TranslationTask extends AsyncTask {
                         continue;
                     }
                     Location loc = location.toBukkit(craft.getWorld());
-                    if (!loc.getBlock().getType().equals(Material.AIR)  && ThreadLocalRandom.current().nextDouble(1) < .05) {
+                    if (!loc.getBlock().getType().isAir() && ThreadLocalRandom.current().nextDouble(1) < .05) {
                         updates.add(new ExplosionUpdateCommand( loc, craft.getType().getExplodeOnCrash()));
                         collisionExplosion = true;
                     }
@@ -434,7 +435,7 @@ public class TranslationTask extends AsyncTask {
                 Map<PotionEffect,Integer> potionEffects = craft.getType().getPotionEffectsToApply();
                 Location oldLocation = location.translate(-dx,-dy,-dz).toBukkit(craft.getW());
                 Location newLocation = location.toBukkit(world);
-                if (!oldLocation.getBlock().getType().equals(Material.AIR)) {
+                if (!oldLocation.getBlock().getType().isAir()) {
                     CraftCollisionExplosionEvent e = new CraftCollisionExplosionEvent(craft, newLocation, craft.getW());
                     Bukkit.getServer().getPluginManager().callEvent(e);
 
@@ -755,7 +756,7 @@ public class TranslationTask extends AsyncTask {
         do {
             surfaceLoc = surfaceLoc.translate(0, 1, 0);
             testType = surfaceLoc.toBukkit(craft.getWorld()).getBlock().getType();
-        } while ((testType != Material.AIR &&
+        } while ((!testType.isAir() &&
                 !craft.getType().getPassthroughBlocks().contains(testType) &&
                 !oldHitBox.contains(surfaceLoc)) &&
                 surfaceLoc.getY() + 1 > craft.getType().getMaxHeightLimit(craft.getW()));
@@ -777,7 +778,7 @@ public class TranslationTask extends AsyncTask {
         int elevation = 0;
         for (MovecraftLocation ml : collisionBox){
             Material testType = ml.toBukkit(craft.getWorld()).getBlock().getType();
-            if (testType == Material.AIR ||
+            if (testType.isAir() ||
                     craft.getType().getPassthroughBlocks().contains(testType) ||
                     (craft.getType().getHarvestBlocks().contains(testType) &&
                             craft.getType().getHarvesterBladeBlocks().contains(ml.translate(-dx, -dy, -dz).toBukkit(craft.getWorld()).getBlock().getType()))) {
@@ -823,7 +824,7 @@ public class TranslationTask extends AsyncTask {
 
                 MovecraftLocation dropped = translated.translate(0, dropDistance - 1 , 0);
                 Material testType = dropped.toBukkit(craft.getWorld()).getBlock().getType();
-                hitGround = testType != Material.AIR &&
+                hitGround = !testType.isAir() &&
                         !craft.getType().getPassthroughBlocks().contains(testType) &&
                         !(craft.getType().getHarvestBlocks().contains(testType) &&
                         craft.getType().getHarvesterBladeBlocks().contains(ml.toBukkit(craft.getW()).getBlock().getType())) ||
@@ -881,7 +882,7 @@ public class TranslationTask extends AsyncTask {
             final CraftType type = craft.getType();
             if (hitBox.contains(beneath) ||
                     bottomLocs.contains(beneath) ||
-                    testType == Material.AIR ||
+                    testType.isAir() ||
                     type.getPassthroughBlocks().contains(testType) ||
                     (type.getHarvestBlocks().contains(testType) && type.getHarvesterBladeBlocks().contains(translatedBottomLoc.translate(-dx, -dy, -dz).toBukkit(craft.getWorld()).getBlock().getType()))){
                 continue;

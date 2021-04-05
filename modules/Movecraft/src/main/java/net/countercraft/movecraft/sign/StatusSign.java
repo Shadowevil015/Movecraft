@@ -66,7 +66,7 @@ public final class StatusSign implements Listener{
                     fuel += iStack.getAmount() * fuelTypes.get(iStack.getType());
                 }
             }
-            if (blockID != Material.AIR && blockID != Material.FIRE) {
+            if (!blockID.isAir() && blockID != Material.FIRE) {
                 totalBlocks++;
             }
         }
