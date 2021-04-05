@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,10 +30,12 @@ public final class CruiseSign implements Listener{
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
+
         Block block = event.getClickedBlock();
         if (!SignUtils.isSign(block)) {
             return;
         }
+
         Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
         Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: OFF")) {
@@ -48,12 +51,8 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) block.getState().getData();
-            if(!block.getType().name().endsWith("SIGN") && block.getType() != LegacyUtils.SIGN_POST)
-                c.setCruiseDirection(CruiseDirection.NONE);
-            else
-                c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
-
+            Directional directional = (Directional) block.getBlockData();
+            c.setCruiseDirection(CruiseDirection.fromBlockFace(directional.getFacing()));
 
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
