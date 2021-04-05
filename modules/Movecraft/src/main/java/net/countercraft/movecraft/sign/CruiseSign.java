@@ -13,8 +13,10 @@ import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -51,8 +53,8 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-            Directional directional = (Directional) block.getBlockData();
-            c.setCruiseDirection(CruiseDirection.fromBlockFace(directional.getFacing()));
+            BlockFace face = ((Rotatable) block.getBlockData()).getRotation();
+            c.setCruiseDirection(CruiseDirection.fromBlockFace(face));
 
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
