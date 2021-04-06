@@ -11,6 +11,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.LegacyUtils;
 import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -53,8 +54,15 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) block.getState().getData();
-            BlockFace face = ((Directional) materialSign).getFacing();
+
+            BlockFace face;
+            if (Tag.WALL_SIGNS.isTagged(block.getType())) {
+                org.bukkit.block.data.type.WallSign data = (org.bukkit.block.data.type.WallSign) sign.getBlockData();
+                face = data.getFacing();
+            } else {
+                org.bukkit.block.data.type.Sign data = (org.bukkit.block.data.type.Sign) sign.getBlockData();
+                face = data.getRotation();
+            }
             c.setCruiseDirection(CruiseDirection.fromBlockFace(face));
 
             c.setLastCruiseUpdate(System.currentTimeMillis());
