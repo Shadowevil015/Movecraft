@@ -54,7 +54,6 @@ public final class CruiseSign implements Listener{
             sign.setLine(0, "Cruise: ON");
             sign.update(true);
 
-
             BlockFace face;
             if (Tag.WALL_SIGNS.isTagged(block.getType())) {
                 org.bukkit.block.data.type.WallSign data = (org.bukkit.block.data.type.WallSign) sign.getBlockData();

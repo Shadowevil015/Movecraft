@@ -17,6 +17,7 @@ import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -71,11 +72,17 @@ public final class CraftSign implements Listener{
 
         if (c.getType().getCruiseOnPilot()) {
             c.detect(null, event.getPlayer(), startPoint);
-            org.bukkit.material.Sign materialSign = (org.bukkit.material.Sign) PaperLib.getBlockState(block, false).getState().getData();
-            if(block.getType().name().endsWith("SIGN") || block.getType() == LegacyUtils.SIGN_POST)
-                c.setCruiseDirection(CruiseDirection.fromBlockFace(materialSign.getFacing()));
-            else
+            if (Tag.WALL_SIGNS.isTagged(block.getType())) {
+                org.bukkit.block.data.type.WallSign data = (org.bukkit.block.data.type.WallSign) sign.getBlockData();
+                c.setCruiseDirection(CruiseDirection.fromBlockFace(data.getFacing()));
+            }
+            else if (Tag.STANDING_SIGNS.isTagged(block.getType())) {
+                org.bukkit.block.data.type.Sign data = (org.bukkit.block.data.type.Sign) sign.getBlockData();
+                c.setCruiseDirection(CruiseDirection.fromBlockFace(data.getRotation()));
+            }
+            else {
                 c.setCruiseDirection(CruiseDirection.NONE);
+            }
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
             new BukkitRunnable() {
