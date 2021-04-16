@@ -17,7 +17,6 @@
 
 package net.countercraft.movecraft.listener;
 
-import io.papermc.lib.PaperLib;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
@@ -25,7 +24,6 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.utils.LegacyUtils;
 import net.countercraft.movecraft.utils.MathUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,13 +45,6 @@ public class BlockListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBlockBreak(final BlockBreakEvent e) {
-        if (e.getBlock().getType().name().endsWith("WALL_SIGN")) {
-            Sign s = (Sign) PaperLib.getBlockState(e.getBlock(), false).getState();
-            if (s.getLine(0).equalsIgnoreCase(ChatColor.RED + "REGION DAMAGED!")) {
-                e.setCancelled(true);
-                return;
-            }
-        }
         if (Settings.ProtectPilotedCrafts) {
             MovecraftLocation mloc = MathUtils.bukkit2MovecraftLoc(e.getBlock().getLocation());
             CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld());
@@ -61,12 +52,10 @@ public class BlockListener implements Listener {
                 if (craft == null || craft.getDisabled()) {
                     continue;
                 }
-                for (MovecraftLocation tloc : craft.getHitBox()) {
-                    if (tloc.equals(mloc)) {
-                        e.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Player - Block part of piloted craft"));
-                        e.setCancelled(true);
-                        return;
-                    }
+                if (craft.getHitBox().contains(mloc)) {
+                    e.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Player - Block part of piloted craft"));
+                    e.setCancelled(true);
+                    return;
                 }
             }
         }
