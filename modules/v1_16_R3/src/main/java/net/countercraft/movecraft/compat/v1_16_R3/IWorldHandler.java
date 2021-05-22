@@ -209,7 +209,6 @@ public class IWorldHandler extends WorldHandler {
 
 
     private void setBlocks(List<BlockPosition> newPositions, List<IBlockData> blockData, WorldServer nativeWorld){
-        Map<BlockPosition, IBlockData> redstoneComponents = new HashMap<>();
         for(int i = 0; i<newPositions.size(); i++) {
             setBlockFast(nativeWorld, newPositions.get(i), blockData.get(i));
         }
@@ -288,27 +287,8 @@ public class IWorldHandler extends WorldHandler {
     }
 
     @Nullable
-    private TileEntity removeTileEntity(@NotNull WorldServer world, @NotNull BlockPosition position){
-        TileEntity tile = world.getTileEntity(position);
-        if(tile == null)
-            return null;
-        //cleanup
-        world.capturedTileEntities.remove(position);
-        world.getChunkAtWorldCoords(position).getTileEntities().remove(position);
-        if(!Settings.IsPaper)
-            world.tileEntityList.remove(tile);
-        world.tileEntityListTick.remove(tile);
-        if(!bMap.containsKey(world)){
-            try {
-                Field bField = World.class.getDeclaredField("tileEntityListPending");
-                bField.setAccessible(true);
-                bMap.put(world, (List<TileEntity>) bField.get(world));//TODO bug fix
-            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e1) {
-                e1.printStackTrace();
-            }
-        }
-        bMap.get(world).remove(tile);
-        return tile;
+    private TileEntity removeTileEntity(@NotNull World world, @NotNull BlockPosition position){
+        return world.getChunkAtWorldCoords(position).tileEntities.remove(position);
     }
 
     @NotNull
@@ -321,13 +301,17 @@ public class IWorldHandler extends WorldHandler {
         ChunkSection chunkSection = chunk.getSections()[position.getY()>>4];
         if (chunkSection == null) {
             // Put a GLASS block to initialize the section. It will be replaced next with the real block.
-            chunk.setType(position, Blocks.GLASS.getBlockData(), true);
+            chunk.setType(position, Blocks.GLASS.getBlockData(), false);
             chunkSection = chunk.getSections()[position.getY() >> 4];
-
         }
-        chunkSection.setType(position.getX() & 15, position.getY() & 15, position.getZ() & 15, data);
+
+        if(chunkSection.getType(position.getX()&15, position.getY()&15, position.getZ()&15).equals(data)){
+            //Block is already of correct type and data, don't overwrite
+            return;
+        }
+
+        chunkSection.setType(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.notify(position, data, data, 3);
-        world.getChunkProvider().getLightEngine().a(position);
         chunk.markDirty();
     }
 

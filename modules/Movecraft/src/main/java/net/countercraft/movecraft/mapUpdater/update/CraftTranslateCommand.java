@@ -207,7 +207,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             for (MovecraftLocation location : invertedHitBox.difference(confirmed)) {
                 Block b = location.toBukkit(world).getBlock();
                 Material material = b.getType();
-                Object data = Settings.IsLegacy ? b.getData() : b.getBlockData();
+                Object data = b.getBlockData();
                 if (!passthroughBlocks.contains(material)) {
                     continue;
                 }
@@ -254,7 +254,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 Location bukkit = location.toBukkit(oldWorld);
                 Block b = bukkit.getBlock();
                 Material material = b.getType();
-                Object data = Settings.IsLegacy ? b.getData() : b.getBlockData();
+                Object data = b.getBlockData();
                 if (passthroughBlocks.contains(material)) {
                     craft.getPhaseBlocks().put(bukkit, new Pair<>(material, data));
                     handler.setBlockFast(bukkit, Material.AIR, (byte) 0);
@@ -265,9 +265,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
         }
         MapUpdateManager.getInstance().scheduleUpdates(toMove);
-        if (!Settings.IsLegacy) {
-            WaterlogUtils.waterlogBlocksOnCraft(craft, interior);
-        }
+        WaterlogUtils.waterlogBlocksOnCraft(craft, interior);
         if (!craft.isNotProcessing()) {
             craft.setProcessing(false);
         }
@@ -299,7 +297,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
         for (MovecraftLocation location : craft.getHitBox()) {
             Block block = location.toBukkit(craft.getWorld()).getBlock();
-            if (SignUtils.isSign(block)) {
+            if (Tag.SIGNS.isTagged(block.getType())) {
                 Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
                 if(!signs.containsKey(sign.getLines()))
                     signs.put(sign.getLines(), new ArrayList<>());
@@ -314,8 +312,8 @@ public class CraftTranslateCommand extends UpdateCommand {
                 continue;
             }
             for(MovecraftLocation location : entry.getValue()){
-                Block block = location.toBukkit(craft.getW()).getBlock();
-                if (!SignUtils.isSign(block)) {
+                Block block = location.toBukkit(craft.getWorld()).getBlock();
+                if (!Tag.SIGNS.isTagged(block.getType())) {
                     continue;
                 }
                 Sign sign = signStates.get(location);

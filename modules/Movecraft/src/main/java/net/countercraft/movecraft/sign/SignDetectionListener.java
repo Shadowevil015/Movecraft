@@ -5,6 +5,7 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.utils.SignUtils;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -22,10 +23,10 @@ public class SignDetectionListener implements Listener {
         World world = event.getCraft().getWorld();
         for (MovecraftLocation location: event.getCraft().getHitBox()) {
             Block block = location.toBukkit(world).getBlock();
-            if (!SignUtils.isSign(block)) {
+            if (!Tag.SIGNS.isTagged(block.getType())) {
                 continue;
             }
-            Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
+            Sign sign = (Sign) block.getState(false);
             switch (sign.getLine(0).toUpperCase()) {
                 case "CONTACTS:":
                 case "STATUS":

@@ -9,6 +9,7 @@ import net.countercraft.movecraft.async.rotation.RotationTask;
 import net.countercraft.movecraft.async.translation.TranslationTask;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -112,12 +113,12 @@ public class ICraft extends Craft {
 
     @Override
     public void resetSigns(@NotNull Sign clicked) {
-        for (final MovecraftLocation ml : hitBox) {
-            final Block b = ml.toBukkit(world).getBlock();
-            if (!(PaperLib.getBlockState(b, false).getState() instanceof Sign)) {
+        for (MovecraftLocation ml : hitBox) {
+            Block b = ml.toBukkit(world).getBlock();
+            if (!Tag.SIGNS.isTagged(b.getType())) {
                 continue;
             }
-            final Sign sign = (Sign) PaperLib.getBlockState(b, false).getState();
+            final Sign sign = (Sign) b.getState(false);
             if (sign.equals(clicked)) {
                 continue;
             }
@@ -143,7 +144,6 @@ public class ICraft extends Craft {
                     && ChatColor.stripColor(clicked.getLine(0)).equalsIgnoreCase("Descend: ON")){
                 sign.setLine(0, "Descend: ON");
             }
-            sign.update();
         }
     }
 

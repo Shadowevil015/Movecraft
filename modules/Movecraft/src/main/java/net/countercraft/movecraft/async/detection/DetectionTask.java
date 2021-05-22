@@ -125,22 +125,21 @@ public class DetectionTask extends AsyncTask {
         if (notVisited(workingLocation, visited)) {
 
             Material testType;
-            int testData;
             Block testBlock;
             try {
                 testBlock = world.getBlockAt(x, y, z);
-                testData = testBlock.getData();
                 testType = testBlock.getType();
             } catch (Exception e) {
                 fail(String.format(I18nSupport.getInternationalisedString("Detection - Craft too large"), maxSize));
                 return;
             }
 
-            if ((testType == Material.WATER) || (testType == LegacyUtils.STATIONARY_WATER)) {
+            if (testType == Material.WATER) {
                 waterContact = true;
             }
-            if (testType.name().endsWith("SIGN") || testType == LegacyUtils.SIGN_POST) {
-                Sign sign = Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), () -> (Sign) PaperLib.getBlockState(testBlock, false).getState()).get();
+
+            if (Tag.SIGNS.isTagged(testType)) {
+                Sign sign = Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), () -> (Sign) testBlock.getState(false)).get();
                 if (sign.getLine(0).equalsIgnoreCase("Pilot:") && player != null) {
                     String playerName = player.getName();
                     boolean foundPilot = false;
@@ -181,10 +180,9 @@ public class DetectionTask extends AsyncTask {
                     }
                 }
             }
-            if (isForbiddenBlock(testType, testData)) {
+            if (isForbiddenBlock(testType)) {
                 fail(I18nSupport.getInternationalisedString("Detection - Forbidden block found"));
-            } else if (isAllowedBlock(testType, testData)) {
-                Location loc = new Location(world, x, y, z);
+            } else if (isAllowedBlock(testType)) {
                 Player p;
                 if (player == null) {
                     p = notificationPlayer;
@@ -192,19 +190,17 @@ public class DetectionTask extends AsyncTask {
                     p = player;
                 }
                 if (p != null) {
-                    if (testType.name().endsWith("WATER") || testType.name().endsWith("LAVA")) {
+                    if (testBlock.isLiquid()) {
                         fluidBox.add(workingLocation);
                     }
                     addToBlockList(workingLocation);
-                    Material blockType = testType;
-                    byte dataID = (byte) testData;
-                    if (dFlyBlocks.hasMetaData(blockType) && dFlyBlocks.contains(blockType, dataID)){
-                        addToBlockCount(dFlyBlocks.get(blockType, dataID).getBlocks());
-                    } else if (dFlyBlocks.contains(blockType)) {
-                        addToBlockCount(dFlyBlocks.get(blockType).getBlocks());
+                    if (dFlyBlocks.hasMetaData(testType) && dFlyBlocks.contains(testType)){
+                        addToBlockCount(dFlyBlocks.get(testType).getBlocks());
+                    } else if (dFlyBlocks.contains(testType)) {
+                        addToBlockCount(dFlyBlocks.get(testType).getBlocks());
                     }
                     if (getCraft().getType().getDynamicFlyBlockSpeedFactor() != 0.0) {
-                        if (getCraft().getType().getDynamicFlyBlocks().contains(blockType)) {
+                        if (getCraft().getType().getDynamicFlyBlocks().contains(testType)) {
                             foundDynamicFlyBlock++;
                         }
                     }
@@ -221,12 +217,12 @@ public class DetectionTask extends AsyncTask {
         }
     }
 
-    private boolean isAllowedBlock(Material test, int testData) {
-        return allowedBlocks.contains(test) || allowedBlocks.contains(test, (byte) testData);
+    private boolean isAllowedBlock(Material test) {
+        return allowedBlocks.contains(test);
     }
 
-    private boolean isForbiddenBlock(Material test, int testData) {
-        return forbiddenBlocks.contains(test) || forbiddenBlocks.contains(test, (byte) testData);
+    private boolean isForbiddenBlock(Material test) {
+        return forbiddenBlocks.contains(test) || forbiddenBlocks.contains(test);
     }
 
     private boolean isForbiddenSignString(String testString) {

@@ -8,6 +8,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.utils.SignUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -25,10 +26,10 @@ public class AscendSign implements Listener {
             return;
         }
         Block block = event.getClickedBlock();
-        if (!SignUtils.isSign(block)){
+        if (!Tag.SIGNS.isTagged(block.getType())){
             return;
         }
-        Sign sign = (Sign) PaperLib.getBlockState(event.getClickedBlock(), false).getState();
+        Sign sign = (Sign) event.getClickedBlock().getState(false);
         if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: OFF")) {
             if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
                 return;

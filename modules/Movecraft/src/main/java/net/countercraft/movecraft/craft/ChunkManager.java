@@ -137,14 +137,9 @@ public class ChunkManager implements Listener {
         if (Settings.Debug)
             Movecraft.getInstance().getLogger().info("Loading " + chunks.size() + " chunks...");
         
-        return Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), new Callable<Boolean>() {
-
-            @Override
-            public Boolean call() throws Exception {
-                ChunkManager.addChunksToLoad(chunks);
-                return true;
-            }
-            
+        return Bukkit.getScheduler().callSyncMethod(Movecraft.getInstance(), () -> {
+            ChunkManager.addChunksToLoad(chunks);
+            return true;
         });
     }
     

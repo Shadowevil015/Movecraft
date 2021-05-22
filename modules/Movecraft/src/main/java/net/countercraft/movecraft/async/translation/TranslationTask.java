@@ -34,10 +34,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
-import static net.countercraft.movecraft.utils.MathUtils.withinWorldBorder;
 
 public class TranslationTask extends AsyncTask {
-    private static final Set<Material> FALL_THROUGH_BLOCKS = new HashSet<>();//Settings.IsLegacy ? new Material[]{}:new Material[]{Material.AIR,
+    private static final Set<Material> FALL_THROUGH_BLOCKS = new HashSet<>();
     private World world;
     private int dx, dy, dz;
     private BitmapHitBox newHitBox, oldHitBox, oldFluidList, newFluidList;
@@ -63,84 +62,39 @@ public class TranslationTask extends AsyncTask {
         FALL_THROUGH_BLOCKS.add(Material.FIRE);
         FALL_THROUGH_BLOCKS.add(Material.REDSTONE_WIRE);
         FALL_THROUGH_BLOCKS.add(Material.LADDER);
-        if (Settings.is1_14){
-            FALL_THROUGH_BLOCKS.add(Material.CAVE_AIR);
-            FALL_THROUGH_BLOCKS.add(Material.BIRCH_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.OAK_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.DARK_OAK_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.JUNGLE_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.SPRUCE_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.ACACIA_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.BIRCH_WALL_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.OAK_WALL_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.DARK_OAK_WALL_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.JUNGLE_WALL_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.SPRUCE_WALL_SIGN);
-            FALL_THROUGH_BLOCKS.add(Material.ACACIA_WALL_SIGN);
-        } else {
-            FALL_THROUGH_BLOCKS.add(Material.getMaterial("SIGN"));
-            FALL_THROUGH_BLOCKS.add(Material.getMaterial("WALL_SIGN"));
-        }
+        FALL_THROUGH_BLOCKS.add(Material.CAVE_AIR);
+
+        FALL_THROUGH_BLOCKS.addAll(Tag.SIGNS.getValues());
+
         FALL_THROUGH_BLOCKS.add(Material.LEVER);
-        FALL_THROUGH_BLOCKS.add(Material.STONE_BUTTON);
         FALL_THROUGH_BLOCKS.add(Material.SNOW);
         FALL_THROUGH_BLOCKS.add(Material.CARROT);
         FALL_THROUGH_BLOCKS.add(Material.POTATO);
-        for (Material type : Material.values()) {
-            if (!type.name().endsWith("FENCE")) {
-                continue;
-            }
-            FALL_THROUGH_BLOCKS.add(type);
-        }
-        if (Settings.IsLegacy) {
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.STATIONARY_WATER);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.STATIONARY_LAVA);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.LONG_GRASS);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.YELLOW_FLOWER);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.RED_ROSE);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.CROPS);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.SIGN_POST);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.STONE_PLATE);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.REDSTONE_TORCH_ON);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.REDSTONE_TORCH_OFF);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.SUGAR_CANE_BLOCK);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.FENCE);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.DIODE_BLOCK_OFF);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.DIODE_BLOCK_ON);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.WATER_LILY);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.WOOD_BUTTON);
-            FALL_THROUGH_BLOCKS.add(LegacyUtils.CARPET);
-        } else {
-            FALL_THROUGH_BLOCKS.add(Material.BUBBLE_COLUMN);
-            FALL_THROUGH_BLOCKS.add(Material.KELP);
-            FALL_THROUGH_BLOCKS.add(Material.KELP_PLANT);
-            FALL_THROUGH_BLOCKS.add(Material.SEAGRASS);
-            FALL_THROUGH_BLOCKS.add(Material.TALL_SEAGRASS);
-            //Leaves
-            FALL_THROUGH_BLOCKS.add(Material.ACACIA_LEAVES);
-            FALL_THROUGH_BLOCKS.add(Material.BIRCH_LEAVES);
-            FALL_THROUGH_BLOCKS.add(Material.DARK_OAK_LEAVES);
-            FALL_THROUGH_BLOCKS.add(Material.JUNGLE_LEAVES);
-            FALL_THROUGH_BLOCKS.add(Material.OAK_LEAVES);
-            FALL_THROUGH_BLOCKS.add(Material.SPRUCE_LEAVES);
-            //Grass
-            FALL_THROUGH_BLOCKS.add(Material.GRASS);
-            //Double plants
-            FALL_THROUGH_BLOCKS.add(Material.ROSE_BUSH);
-            FALL_THROUGH_BLOCKS.add(Material.SUNFLOWER);
-            FALL_THROUGH_BLOCKS.add(Material.LILAC);
-            FALL_THROUGH_BLOCKS.add(Material.PEONY);
-            FALL_THROUGH_BLOCKS.add(Material.SEA_PICKLE);
-            FALL_THROUGH_BLOCKS.add(Material.REPEATER);
-            FALL_THROUGH_BLOCKS.add(Material.COMPARATOR);
-            for (Material type : Material.values()) {
-                if (!type.name().endsWith("BUTTON") && !type.name().endsWith("PRESSURE_PLATE") && !type.name().endsWith("CARPET")) {
-                    continue;
-                }
-                FALL_THROUGH_BLOCKS.add(type);
-            }
+        FALL_THROUGH_BLOCKS.addAll(Tag.FENCES.getValues());
 
-        }
+        FALL_THROUGH_BLOCKS.add(Material.BUBBLE_COLUMN);
+        FALL_THROUGH_BLOCKS.add(Material.KELP);
+        FALL_THROUGH_BLOCKS.add(Material.KELP_PLANT);
+        FALL_THROUGH_BLOCKS.add(Material.SEAGRASS);
+        FALL_THROUGH_BLOCKS.add(Material.TALL_SEAGRASS);
+        //Leaves
+        FALL_THROUGH_BLOCKS.addAll(Tag.LEAVES.getValues());
+
+        //Grass
+        FALL_THROUGH_BLOCKS.add(Material.GRASS);
+        //Double plants
+        FALL_THROUGH_BLOCKS.add(Material.ROSE_BUSH);
+        FALL_THROUGH_BLOCKS.add(Material.SUNFLOWER);
+        FALL_THROUGH_BLOCKS.add(Material.LILAC);
+        FALL_THROUGH_BLOCKS.add(Material.PEONY);
+        FALL_THROUGH_BLOCKS.add(Material.SEA_PICKLE);
+        FALL_THROUGH_BLOCKS.add(Material.REPEATER);
+        FALL_THROUGH_BLOCKS.add(Material.COMPARATOR);
+
+        FALL_THROUGH_BLOCKS.addAll(Tag.BUTTONS.getValues());
+        FALL_THROUGH_BLOCKS.addAll(Tag.PRESSURE_PLATES.getValues());
+        FALL_THROUGH_BLOCKS.addAll(Tag.CARPETS.getValues());
+
         newHitBox = new BitmapHitBox();
         oldHitBox = new BitmapHitBox(c.getHitBox());
         oldFluidList = new BitmapHitBox(c.getFluidLocations());
@@ -322,7 +276,7 @@ public class TranslationTask extends AsyncTask {
                 fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft is obstructed") + " @ %d,%d,%d,%s", newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.toBukkit(craft.getWorld()).getBlock().getType().toString()));
                 return;
             }
-            if (!withinWorldBorder(world, newLocation)) {
+            if (!world.getWorldBorder().isInside(newLocation.toBukkit(world))) {
                 fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ()));
                 return;
             }
@@ -578,7 +532,7 @@ public class TranslationTask extends AsyncTask {
                 }
                 //get contents of inventories before deposting
 
-                BlockState state = PaperLib.getBlockState(block, false).getState();
+                BlockState state = block.getState(false);
                 if (state instanceof InventoryHolder) {
                     if (state instanceof Chest) {
                         drops.addAll(Arrays.asList(((Chest) state).getBlockInventory().getContents()));

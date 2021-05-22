@@ -18,6 +18,7 @@ import net.countercraft.movecraft.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
@@ -276,7 +277,7 @@ public class CraftRotateCommand extends UpdateCommand {
 
         for (MovecraftLocation location : craft.getHitBox()) {
             Block block = location.toBukkit(craft.getWorld()).getBlock();
-            if (SignUtils.isSign(block)) {
+            if (Tag.SIGNS.isTagged(block.getType())) {
                 Sign sign = (Sign) PaperLib.getBlockState(block, false).getState();
                 String[] lines = sign.getLines();
                 if(!signs.containsKey(lines))
@@ -292,8 +293,8 @@ public class CraftRotateCommand extends UpdateCommand {
                 continue;
             }
             for(MovecraftLocation location : entry.getValue()){
-                Block block = location.toBukkit(craft.getW()).getBlock();
-                if (!SignUtils.isSign(block)) {
+                Block block = location.toBukkit(craft.getWorld()).getBlock();
+                if (!Tag.SIGNS.isTagged(block.getType())) {
                     continue;
                 }
                 Sign sign = signStates.get(location);

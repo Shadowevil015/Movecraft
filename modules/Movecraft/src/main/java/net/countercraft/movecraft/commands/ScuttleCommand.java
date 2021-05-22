@@ -31,17 +31,21 @@ public class ScuttleCommand implements CommandExecutor {
                 return true;
             }
             craft = CraftManager.getInstance().getCraftByPlayer(player);
-        } else if (commandSender.hasPermission("movecraft.commands.scuttle.self") && strings.length == 0) {
+        }
+
+        else if (commandSender.hasPermission("movecraft.commands.scuttle.self") && strings.length == 0) {
             if (!(commandSender instanceof Player)) {
                 commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Scuttle - Must Be Player"));
                 return true;
             }
             craft = CraftManager.getInstance().getCraftByPlayer(Bukkit.getPlayer(commandSender.getName()));
         }
+
         if (craft == null) {
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX +  I18nSupport.getInternationalisedString("You must be piloting a craft"));
             return true;
         }
+
         if(craft.getSinking()){
             commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Scuttle - Craft Already Sinking"));
             return true;
@@ -49,7 +53,8 @@ public class ScuttleCommand implements CommandExecutor {
 
         CraftScuttleEvent e = new CraftScuttleEvent(craft, (Player) commandSender);
         Bukkit.getServer().getPluginManager().callEvent(e);
-        if(e.isCancelled())
+
+        if (e.isCancelled())
             return true;
 
         craft.setCruising(false);
