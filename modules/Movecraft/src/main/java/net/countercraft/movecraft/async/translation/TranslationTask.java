@@ -437,7 +437,8 @@ public class TranslationTask extends AsyncTask {
         }
         updates.add(new CraftTranslateCommand(craft, new MovecraftLocation(dx, dy, dz)));
 
-
+        final CraftPostTranslateEvent postTranslateEvent = new CraftPostTranslateEvent(craft, dx, dy, dz, world);
+        Bukkit.getServer().getPluginManager().callEvent(postTranslateEvent);
 
         captureYield(harvestedBlocks);
     }
