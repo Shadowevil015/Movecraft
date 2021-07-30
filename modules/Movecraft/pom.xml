@@ -24,12 +24,12 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -38,6 +38,7 @@
     </repositories>
 
     <dependencies>
+        <!--
         <dependency>
             <groupId>net.countercraft</groupId>
             <artifactId>movecraft-v1_14_r1</artifactId>
@@ -55,6 +56,13 @@
             <artifactId>movecraft-v1_16_r3</artifactId>
             <version>${revision}</version>
             <type>jar</type>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.countercraft</groupId>
