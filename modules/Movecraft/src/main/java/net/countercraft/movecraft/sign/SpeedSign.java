@@ -10,10 +10,11 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public final class SpeedSign implements Listener{
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftDetect(CraftDetectEvent event){
         World world = event.getCraft().getWorld();
         for(MovecraftLocation location: event.getCraft().getHitBox()){

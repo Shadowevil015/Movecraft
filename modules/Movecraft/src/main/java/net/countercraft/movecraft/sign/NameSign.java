@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 public final class NameSign implements Listener {
     private static final String HEADER = "Name:";
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftDetect(@NotNull CraftDetectEvent event) {
         Craft c = event.getCraft();
 

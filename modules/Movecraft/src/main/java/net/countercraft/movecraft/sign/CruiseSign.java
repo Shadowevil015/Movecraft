@@ -23,7 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class CruiseSign implements Listener{
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftDetect(CraftDetectEvent event){
         World world = event.getCraft().getWorld();
         for(MovecraftLocation location: event.getCraft().getHitBox()){
