@@ -43,48 +43,33 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Attachable;
 
 import java.util.EnumSet;
 
 public class BlockListener implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
-        if (e.getBlock().getState() instanceof Sign) {
-            Sign s = (Sign) e.getBlock().getState();
-            if (s.getLine(0).equalsIgnoreCase(ChatColor.RED + I18nSupport.getInternationalisedString("Region Damaged"))) {
-                e.setCancelled(true);
-                return;
-            }
-        }
         if (Settings.ProtectPilotedCrafts) {
             MovecraftLocation mloc = MathUtils.bukkit2MovecraftLoc(e.getBlock().getLocation());
-            CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld());
             for (Craft craft : CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld())) {
                 if (craft == null || craft.getDisabled()) {
                     continue;
                 }
-                for (MovecraftLocation tloc : craft.getHitBox()) {
-                    if (tloc.equals(mloc)) {
-                        e.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Player - Block part of piloted craft"));
-                        e.setCancelled(true);
-                        return;
-                    }
+                if (craft.getHitBox().contains(mloc)) {
+                    e.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Player - Block part of piloted craft"));
+                    e.setCancelled(true);
+                    return;
                 }
             }
         }
     }
 
-    // prevent items from dropping from moving crafts
-    @EventHandler(priority = EventPriority.HIGHEST)
+    // Prevent items from dropping from moving crafts, such as redstone dust from redstone wire.
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onItemSpawn(final ItemSpawnEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         for (Craft tcraft : CraftManager.getInstance().getCraftsInWorld(e.getLocation().getWorld())) {
             if ((!tcraft.isNotProcessing()) && MathUtils.locationInHitBox(tcraft.getHitBox(), e.getLocation())) {
                 e.setCancelled(true);
@@ -94,13 +79,10 @@ public class BlockListener implements Listener {
     }
 
     // prevent water and lava from spreading on moving crafts
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockFromTo(BlockFromToEvent e) {
-        if (e.isCancelled()) {
-            return;
-        }
         Block block = e.getToBlock();
-        if (block.getType() != Material.WATER && block.getType() != Material.LAVA) {
+        if (!block.isLiquid()) {
             return;
         }
         for (Craft tcraft : CraftManager.getInstance().getCraftsInWorld(block.getWorld())) {
@@ -111,7 +93,7 @@ public class BlockListener implements Listener {
         }
     }
 
-    // process certain redstone on cruising crafts
+    /* process certain redstone on cruising crafts
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
@@ -127,15 +109,15 @@ public class BlockListener implements Listener {
             }
         }
     }
+     */
 
     // prevent pistons on cruising crafts
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPistonEvent(BlockPistonExtendEvent event) {
         Block block = event.getBlock();
-        CraftManager.getInstance().getCraftsInWorld(block.getWorld());
+        MovecraftLocation mloc = new MovecraftLocation(block.getX(), block.getY(), block.getZ());
         for (Craft tcraft : CraftManager.getInstance().getCraftsInWorld(block.getWorld())) {
-            MovecraftLocation mloc = new MovecraftLocation(block.getX(), block.getY(), block.getZ());
-            if (MathUtils.locIsNearCraftFast(tcraft, mloc) && tcraft.getCruising() && !tcraft.isNotProcessing()) {
+            if (tcraft.getCruising() && !tcraft.isNotProcessing() && MathUtils.locIsNearCraftFast(tcraft, mloc)) {
                 event.setCancelled(true);
                 return;
             }
@@ -143,23 +125,23 @@ public class BlockListener implements Listener {
     }
 
     // prevent hoppers on cruising crafts
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onHopperEvent(InventoryMoveItemEvent event) {
-        if (!(event.getSource().getHolder() instanceof Hopper)) {
+        InventoryHolder holder = event.getSource().getHolder(false);
+        if (!(holder instanceof Hopper)) {
             return;
         }
-        Hopper block = (Hopper) event.getSource().getHolder();
-        CraftManager.getInstance().getCraftsInWorld(block.getWorld());
+        Hopper block = (Hopper) holder;
+        MovecraftLocation mloc = new MovecraftLocation(block.getX(), block.getY(), block.getZ());
         for (Craft tcraft : CraftManager.getInstance().getCraftsInWorld(block.getWorld())) {
-            MovecraftLocation mloc = new MovecraftLocation(block.getX(), block.getY(), block.getZ());
-            if (MathUtils.locIsNearCraftFast(tcraft, mloc) && tcraft.getCruising() && !tcraft.isNotProcessing()) {
+            if (tcraft.getCruising() && !tcraft.isNotProcessing() && MathUtils.locIsNearCraftFast(tcraft, mloc)) {
                 event.setCancelled(true);
                 return;
             }
         }
     }
 
-    // prevent fragile items from dropping on cruising crafts
+    /* prevent fragile items from dropping on cruising crafts
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPhysics(BlockPhysicsEvent event) {
         if (event.isCancelled()) {
@@ -197,11 +179,11 @@ public class BlockListener implements Listener {
             }
         }
     }
+     */
 
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent e) {
-        CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld());
         for (Craft craft : CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld())) {
             if (craft != null &&
                     !craft.isNotProcessing() &&
@@ -212,7 +194,7 @@ public class BlockListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onFlow(BlockFromToEvent e){
         if(Settings.DisableSpillProtection)
             return;
@@ -228,7 +210,7 @@ public class BlockListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onIceForm(BlockFormEvent e) {
         if (e.isCancelled() || !Settings.DisableIceForm) {
             return;
