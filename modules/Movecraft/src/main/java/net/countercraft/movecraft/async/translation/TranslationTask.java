@@ -9,12 +9,7 @@ import net.countercraft.movecraft.craft.ChunkManager;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.CraftType;
-import net.countercraft.movecraft.events.CraftCollisionEvent;
-import net.countercraft.movecraft.events.CraftCollisionExplosionEvent;
-import net.countercraft.movecraft.events.CraftPreTranslateEvent;
-import net.countercraft.movecraft.events.CraftReleaseEvent;
-import net.countercraft.movecraft.events.CraftTranslateEvent;
-import net.countercraft.movecraft.events.ItemHarvestEvent;
+import net.countercraft.movecraft.events.*;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.update.BlockCreateCommand;
 import net.countercraft.movecraft.mapUpdater.update.CraftTranslateCommand;
@@ -431,6 +426,9 @@ public class TranslationTask extends AsyncTask {
                 CraftManager.getInstance().addReleaseTask(craft);
         }
         captureYield(harvestedBlocks);
+
+        final CraftPostTranslateEvent postTranslateEvent = new CraftPostTranslateEvent(craft, dx, dy, dz, world);
+        Bukkit.getServer().getPluginManager().callEvent(postTranslateEvent);
     }
 
     private void fail(@NotNull String failMessage) {
