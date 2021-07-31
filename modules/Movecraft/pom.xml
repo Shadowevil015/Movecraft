@@ -65,6 +65,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.17-R0.1-SNAPSHOT</version>
+            <classifier>remapped-mojang</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.countercraft</groupId>
             <artifactId>movecraft-v1_17_r1</artifactId>
             <version>${revision}</version>
