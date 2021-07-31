@@ -11,9 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.TickNextTickData;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -216,8 +214,18 @@ public class IWorldHandler extends WorldHandler {
 
         LevelChunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.sendBlockUpdated(position, data, data, 3);
+        if (isRedstoneComponent(data.getBlock())) {
+            world.updateNeighborsAt(position, data.getBlock());
+        }
         world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
         chunk.markUnsaved();
+    }
+
+    private boolean isRedstoneComponent(Block block) {
+        return block instanceof RedStoneWireBlock ||
+                block instanceof DiodeBlock ||
+                block instanceof ButtonBlock ||
+                block instanceof LeverBlock;
     }
 
     @Override
