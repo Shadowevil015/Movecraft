@@ -76,10 +76,12 @@ public final class SubcraftRotateSign implements Listener {
 
         final Craft craft = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if(craft!=null) {
+            /*
             if (!craft.isNotProcessing()) {
                 event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Detection - Parent Craft is busy"));
                 return;
             }
+             */
             craft.setProcessing(true); // prevent the parent craft from moving or updating until the subcraft is done
             new BukkitRunnable() {
                 @Override

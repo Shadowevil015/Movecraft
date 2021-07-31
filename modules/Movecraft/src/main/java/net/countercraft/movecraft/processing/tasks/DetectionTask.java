@@ -177,7 +177,9 @@ public class DetectionTask implements Runnable {
         var result = completionValidators.stream().reduce(TaskPredicate::and).orElse((a,b,c,d) -> Result.fail()).validate(materials, craft.getType(), world, player);
         result = result.isSucess() ? visitedValidators.stream().reduce(TaskPredicate::and).orElse((a, b, c, d) -> Result.fail()).validate(visitedMaterials, craft.getType(), world, player) : result;
         if(!result.isSucess()){
-            player.sendMessage(result.getMessage());
+            if (player != null) {
+                player.sendMessage(result.getMessage());
+            }
             return;
         }
         craft.setHitBox(new BitmapHitBox(legal));
