@@ -3,6 +3,7 @@ package net.countercraft.movecraft.sign;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -20,6 +21,9 @@ public final class RelativeMoveSign implements Listener{
             return;
         }
         Block block = event.getClickedBlock();
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
+            return;
+        }
         BlockState state = block.getState(false);
         if (!(state instanceof Sign)) {
             return;

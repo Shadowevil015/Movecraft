@@ -4,6 +4,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -17,6 +18,9 @@ public final class ReleaseSign implements Listener{
     @EventHandler
     public final void onSignClick(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
             return;
         }
         BlockState state = event.getClickedBlock().getState(false);

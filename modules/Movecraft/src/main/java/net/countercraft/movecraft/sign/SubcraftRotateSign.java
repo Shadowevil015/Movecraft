@@ -13,6 +13,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -35,6 +36,9 @@ public final class SubcraftRotateSign implements Listener {
         }else if(event.getAction() == Action.LEFT_CLICK_BLOCK){
             rotation = MovecraftRotation.ANTICLOCKWISE;
         }else{
+            return;
+        }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
             return;
         }
         BlockState state = event.getClickedBlock().getState(false);

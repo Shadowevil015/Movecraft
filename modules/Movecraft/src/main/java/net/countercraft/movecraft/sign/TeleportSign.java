@@ -5,6 +5,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -20,6 +21,12 @@ public final class TeleportSign implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
+            return;
+        }
+        if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
+            return;
+        }
         BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
@@ -28,9 +35,7 @@ public final class TeleportSign implements Listener {
         if (!ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase(HEADER)) {
             return;
         }
-        if (CraftManager.getInstance().getCraftByPlayer(event.getPlayer()) == null) {
-            return;
-        }
+
         
         int tX = sign.getX(); int tY = sign.getY(); int tZ = sign.getZ();
         String[] numbers = ChatColor.stripColor(sign.getLine(1)).replaceAll(" ", "").split(",");

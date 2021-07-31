@@ -42,6 +42,9 @@ public final class DescendSign implements Listener{
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
+            return;
+        }
         BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;

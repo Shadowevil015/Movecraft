@@ -24,7 +24,7 @@ public class AscendSign implements Listener {
         World world = event.getCraft().getWorld();
         for(MovecraftLocation location: event.getCraft().getHitBox()){
             var block = location.toBukkit(world).getBlock();
-            if(!Tag.SIGNS.isTagged(block.getType())){
+            if (!Tag.SIGNS.isTagged(block.getType())) {
                 continue;
             }
             BlockState state = block.getState(false);
@@ -45,6 +45,9 @@ public class AscendSign implements Listener {
             return;
         }
         Block block = event.getClickedBlock();
+        if (!Tag.SIGNS.isTagged(block.getType())) {
+            return;
+        }
         BlockState state = block.getState(false);
         if (!(state instanceof Sign)){
             return;

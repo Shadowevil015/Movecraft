@@ -9,6 +9,7 @@ import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -42,6 +43,9 @@ public final class RemoteSign implements Listener{
     @EventHandler
     public final void onSignClick(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_BLOCK) {
+            return;
+        }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
             return;
         }
         BlockState state = event.getClickedBlock().getState(false);

@@ -6,6 +6,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,9 @@ public final class HelmSign implements Listener {
         }else if(event.getAction() == Action.LEFT_CLICK_BLOCK){
             rotation = MovecraftRotation.ANTICLOCKWISE;
         }else{
+            return;
+        }
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
             return;
         }
         BlockState state = event.getClickedBlock().getState(false);
