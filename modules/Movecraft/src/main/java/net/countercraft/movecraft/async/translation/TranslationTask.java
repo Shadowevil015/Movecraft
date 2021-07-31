@@ -33,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
@@ -477,9 +478,11 @@ public class TranslationTask extends AsyncTask {
                 chests.add(((InventoryHolder) (block.getState())).getInventory());
         }
 
+        ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
+        pickaxe.addEnchantment(Enchantment.SILK_TOUCH, 1);
         for (MovecraftLocation harvestedBlock : harvestedBlocks) {
             Block block = craft.getWorld().getBlockAt(harvestedBlock.getX(), harvestedBlock.getY(), harvestedBlock.getZ());
-            List<ItemStack> drops = new ArrayList<>(block.getDrops());
+            List<ItemStack> drops = new ArrayList<>(block.getDrops(pickaxe));
             //generate seed drops
             if (block.getType() == Material.WHEAT) {
                 Random rand = new Random();
