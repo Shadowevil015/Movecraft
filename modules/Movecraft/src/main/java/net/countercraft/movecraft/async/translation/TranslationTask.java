@@ -35,6 +35,7 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
@@ -489,11 +490,12 @@ public class TranslationTask extends AsyncTask {
                 }
             }
             //get contents of inventories before deposting
-            if (block.getState() instanceof InventoryHolder) {
-                if (block.getState() instanceof Chest) {
-                    drops.addAll(Arrays.asList(((Chest) block.getState()).getBlockInventory().getContents()));
+            BlockState state = block.getState(false);
+            if (state instanceof InventoryHolder) {
+                if (state instanceof Chest) {
+                    drops.addAll(Arrays.asList(((Chest)state).getBlockInventory().getContents()));
                 } else {
-                    drops.addAll(Arrays.asList((((InventoryHolder) block.getState()).getInventory().getContents())));
+                    drops.addAll(Arrays.asList((((InventoryHolder) state).getInventory().getContents())));
                 }
             }
             //call event

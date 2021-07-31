@@ -77,7 +77,7 @@ public abstract class AsyncTask extends BukkitRunnable {
         for (MovecraftLocation bTest : craft.getHitBox()) {
             Block b = craft.getWorld().getBlockAt(bTest.getX(), bTest.getY(), bTest.getZ());
             if (b.getType() == Material.FURNACE) {
-                InventoryHolder inventoryHolder = (InventoryHolder) b.getState();
+                InventoryHolder inventoryHolder = (InventoryHolder) b.getState(false);
                 for (ItemStack stack : inventoryHolder.getInventory()) {
                     if (stack == null || !craft.getType().getFuelTypes().containsKey(stack.getType()))
                         continue;
@@ -89,7 +89,7 @@ public abstract class AsyncTask extends BukkitRunnable {
         if (fuelHolder == null) {
             return false;
         }
-        InventoryHolder inventoryHolder = (InventoryHolder) fuelHolder.getState();
+        InventoryHolder inventoryHolder = (InventoryHolder) fuelHolder.getState(false);
         for (ItemStack iStack : inventoryHolder.getInventory()) {
             if (iStack == null)
                 continue;

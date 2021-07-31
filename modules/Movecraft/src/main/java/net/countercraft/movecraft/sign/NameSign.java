@@ -36,7 +36,7 @@ public final class NameSign implements Listener {
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }
-            BlockState state = block.getState();
+            BlockState state = block.getState(false);
             if (!(state instanceof Sign)) {
                 return;
             }

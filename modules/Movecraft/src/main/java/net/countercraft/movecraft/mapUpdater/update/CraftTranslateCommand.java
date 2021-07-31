@@ -315,7 +315,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }
-            BlockState state = block.getState();
+            BlockState state = block.getState(false);
             if (state instanceof Sign) {
                 Sign sign = (Sign) state;
                 if(!signs.containsKey(sign.getLines()))
@@ -332,7 +332,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             }
             for(MovecraftLocation location : entry.getValue()){
                 Block block = location.toBukkit(craft.getWorld()).getBlock();
-                BlockState state = block.getState();
+                BlockState state = block.getState(false);
                 if (!(state instanceof Sign)) {
                     continue;
                 }

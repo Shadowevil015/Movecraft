@@ -37,7 +37,7 @@ public final class SubcraftRotateSign implements Listener {
         }else{
             return;
         }
-        BlockState state = event.getClickedBlock().getState();
+        BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
         }

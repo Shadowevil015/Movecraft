@@ -23,7 +23,7 @@ public class ContactsSign implements Listener{
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }
-            BlockState state = block.getState();
+            BlockState state = block.getState(false);
             if(state instanceof Sign){
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Contacts:")) {

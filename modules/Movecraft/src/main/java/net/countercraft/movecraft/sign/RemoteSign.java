@@ -44,7 +44,7 @@ public final class RemoteSign implements Listener{
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.LEFT_CLICK_BLOCK) {
             return;
         }
-        BlockState state = event.getClickedBlock().getState();
+        BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
         }
@@ -86,7 +86,7 @@ public final class RemoteSign implements Listener{
         LinkedList<MovecraftLocation> foundLocations = new LinkedList<MovecraftLocation>();
         boolean firstError = true;
         for (MovecraftLocation tloc : foundCraft.getHitBox()) {
-            BlockState tstate = event.getClickedBlock().getWorld().getBlockAt(tloc.getX(), tloc.getY(), tloc.getZ()).getState();
+            BlockState tstate = event.getClickedBlock().getWorld().getBlockAt(tloc.getX(), tloc.getY(), tloc.getZ()).getState(false);
             if (!(tstate instanceof Sign)) {
                 continue;
             }

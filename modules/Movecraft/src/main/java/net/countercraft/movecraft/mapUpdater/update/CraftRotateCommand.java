@@ -214,9 +214,9 @@ public class CraftRotateCommand extends UpdateCommand {
 
         for (MovecraftLocation location : craft.getHitBox()) {
             Block block = location.toBukkit(craft.getWorld()).getBlock();
-            BlockState state = block.getState();
+            BlockState state = block.getState(false);
             if (state instanceof Sign) {
-                Sign sign = (Sign) block.getState();
+                Sign sign = (Sign) state;
                 if(!signs.containsKey(sign.getLines()))
                     signs.put(sign.getLines(), new ArrayList<>());
                 signs.get(sign.getLines()).add(location);
@@ -231,7 +231,7 @@ public class CraftRotateCommand extends UpdateCommand {
             }
             for(MovecraftLocation location : entry.getValue()){
                 Block block = location.toBukkit(craft.getWorld()).getBlock();
-                BlockState state =  block.getState();
+                BlockState state =  block.getState(false);
                 if (!(state instanceof Sign)) {
                     continue;
                 }

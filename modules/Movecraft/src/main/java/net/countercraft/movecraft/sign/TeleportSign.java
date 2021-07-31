@@ -20,7 +20,7 @@ public final class TeleportSign implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        BlockState state = event.getClickedBlock().getState();
+        BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
         }

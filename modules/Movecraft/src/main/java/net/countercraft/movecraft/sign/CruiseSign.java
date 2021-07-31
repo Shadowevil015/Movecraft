@@ -31,7 +31,7 @@ public final class CruiseSign implements Listener{
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }
-            BlockState state = block.getState();
+            BlockState state = block.getState(false);
             if(state instanceof Sign){
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: ON")) {
@@ -47,7 +47,7 @@ public final class CruiseSign implements Listener{
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
-        BlockState state = event.getClickedBlock().getState();
+        BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
         }
