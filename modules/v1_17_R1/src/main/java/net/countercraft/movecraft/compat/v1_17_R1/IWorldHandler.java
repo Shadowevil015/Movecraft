@@ -187,6 +187,10 @@ public class IWorldHandler extends WorldHandler {
             BlockPos position = deletePositions.get(i);
             setBlockFast(oldNativeWorld, position, Blocks.AIR.defaultBlockState());
         }
+        //*******************************************
+        //*      Step six: Process redstone         *
+        //*******************************************
+        processRedstone(newPositions, nativeWorld);
     }
 
     @Nullable
@@ -214,11 +218,30 @@ public class IWorldHandler extends WorldHandler {
 
         LevelChunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.sendBlockUpdated(position, data, data, 3);
-        if (isRedstoneComponent(data.getBlock())) {
-            world.updateNeighborsAt(position, data.getBlock());
-        }
         world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
         chunk.markUnsaved();
+    }
+
+    private void processRedstone(List<BlockPos> redstone, Level world) {
+        Map<BlockPos, BlockState> redstoneComponents = new HashMap<>();
+        for (BlockPos pos : redstone) {
+            BlockState data = world.getBlockState(pos);
+            if (isRedstoneComponent(data.getBlock()))
+                redstoneComponents.put(pos, data);
+        }
+        for (Map.Entry<BlockPos, BlockState> entry : redstoneComponents.entrySet()) {
+            final BlockPos position = entry.getKey();
+            final BlockState data = entry.getValue();
+            LevelChunk chunk = world.getChunkAt(position);
+            LevelChunkSection chunkSection = chunk.getSections()[position.getY()>>4];
+            if (chunkSection == null) {
+                // Put a GLASS block to initialize the section. It will be replaced next with the real block.
+                chunk.setBlockState(position, Blocks.GLASS.defaultBlockState(), false);
+                chunkSection = chunk.getSections()[position.getY() >> 4];
+            }
+            chunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
+            world.updateNeighborsAt(position, data.getBlock());
+        }
     }
 
     private boolean isRedstoneComponent(Block block) {
