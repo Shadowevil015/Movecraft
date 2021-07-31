@@ -19,6 +19,6 @@ import java.util.Map;
 public class AlreadyPilotingValidator implements TaskPredicate<Map<Material, Deque<MovecraftLocation>>> {
     @Override
     public Result validate(@NotNull Map<Material, Deque<MovecraftLocation>> ignored, @NotNull CraftType type, @NotNull MovecraftWorld world, @Nullable CommandSender player) {
-        return player instanceof Player && CraftManager.getInstance().getCraftByPlayer((Player) player) != null ? Result.failWithMessage(I18nSupport.getInternationalisedString("Detection - Failed - Already commanding a craft")) : Result.succeed();
+        return player instanceof Player && CraftManager.getInstance().getCraftByPlayer((Player) player) != null && !type.getCruiseOnPilot() ? Result.failWithMessage(I18nSupport.getInternationalisedString("Detection - Failed - Already commanding a craft")) : Result.succeed();
     }
 }
