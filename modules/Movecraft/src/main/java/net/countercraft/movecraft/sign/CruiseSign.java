@@ -8,6 +8,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
@@ -36,7 +37,9 @@ public final class CruiseSign implements Listener{
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: ON")) {
                     sign.setLine(0, "Cruise: OFF");
-                    sign.update();
+                    //sign.update();
+                    sign.setColor(DyeColor.RED);
+                    sign.setGlowingText(true);
                 }
             }
         }
@@ -65,7 +68,9 @@ public final class CruiseSign implements Listener{
             }
             //c.resetSigns(false, true, true);
             sign.setLine(0, "Cruise: ON");
-            sign.update(true);
+            //sign.update(true);
+            sign.setColor(DyeColor.GREEN);
+            sign.setGlowingText(true);
 
             if(sign.getBlockData() instanceof WallSign) {
                 c.setCruiseDirection(CruiseDirection.fromBlockFace(((WallSign) sign.getBlockData()).getFacing()));
@@ -85,7 +90,9 @@ public final class CruiseSign implements Listener{
                 && CraftManager.getInstance().getCraftByPlayer(event.getPlayer()).getType().getCanCruise()) {
             Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
             sign.setLine(0, "Cruise: OFF");
-            sign.update(true);
+            //sign.update(true);
+            sign.setColor(DyeColor.RED);
+            sign.setGlowingText(true);
             c.setCruising(false);
             c.resetSigns(sign);
         }

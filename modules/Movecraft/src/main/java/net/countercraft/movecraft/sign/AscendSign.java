@@ -6,6 +6,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -32,7 +33,9 @@ public class AscendSign implements Listener {
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: ON")) {
                     sign.setLine(0, "Ascend: OFF");
-                    sign.update();
+                    //sign.update();
+                    sign.setColor(DyeColor.RED);
+                    sign.setGlowingText(true);
                 }
             }
         }
@@ -63,7 +66,9 @@ public class AscendSign implements Listener {
             }
             //c.resetSigns(true, false, true);
             sign.setLine(0, "Ascend: ON");
-            sign.update(true);
+            //sign.update(true);
+            sign.setColor(DyeColor.GREEN);
+            sign.setGlowingText(true);
 
             c.setCruiseDirection(CruiseDirection.UP);
             c.setLastCruiseUpdate(System.currentTimeMillis());
@@ -83,7 +88,9 @@ public class AscendSign implements Listener {
             return;
         }
         sign.setLine(0, "Ascend: OFF");
-        sign.update(true);
+        sign.setColor(DyeColor.RED);
+        sign.setGlowingText(true);
+        //sign.update(true);
 
         c.setCruising(false);
         c.resetSigns(sign);

@@ -20,11 +20,7 @@ import net.countercraft.movecraft.util.hitboxes.MutableHitBox;
 import net.countercraft.movecraft.util.hitboxes.SetHitBox;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -205,6 +201,9 @@ public abstract class BaseCraft implements Craft{
     public void resetSigns(@NotNull Sign clicked) {
         for (final MovecraftLocation ml : hitBox) {
             final Block b = ml.toBukkit(w).getBlock();
+            if (!Tag.SIGNS.isTagged(b.getType())) {
+                continue;
+            }
             BlockState state = b.getState(false);
             if (!(state instanceof Sign)) {
                 continue;
@@ -215,25 +214,37 @@ public abstract class BaseCraft implements Craft{
             }
             if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: ON")){
                 sign.setLine(0, "Cruise: OFF");
+                sign.setColor(DyeColor.RED);
+                sign.setGlowingText(true);
             }
             else if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Cruise: OFF")
                     && ChatColor.stripColor(clicked.getLine(0)).equalsIgnoreCase("Cruise: ON")
                     && getFacing(sign) == getFacing(clicked)) {
                 sign.setLine(0,"Cruise: ON");
+                sign.setColor(DyeColor.GREEN);
+                sign.setGlowingText(true);
             }
             else if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: ON")){
                 sign.setLine(0, "Ascend: OFF");
+                sign.setColor(DyeColor.RED);
+                sign.setGlowingText(true);
             }
             else if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: OFF")
                     && ChatColor.stripColor(clicked.getLine(0)).equalsIgnoreCase("Ascend: ON")){
                 sign.setLine(0, "Ascend: ON");
+                sign.setColor(DyeColor.GREEN);
+                sign.setGlowingText(true);
             }
             else if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Descend: ON")){
                 sign.setLine(0, "Descend: OFF");
+                sign.setColor(DyeColor.RED);
+                sign.setGlowingText(true);
             }
             else if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Descend: OFF")
                     && ChatColor.stripColor(clicked.getLine(0)).equalsIgnoreCase("Descend: ON")){
                 sign.setLine(0, "Descend: ON");
+                sign.setColor(DyeColor.GREEN);
+                sign.setGlowingText(true);
             }
             sign.update();
         }
