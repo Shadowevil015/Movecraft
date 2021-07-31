@@ -80,6 +80,7 @@ public class TranslationTask extends AsyncTask {
         FALL_THROUGH_BLOCKS.add(Material.SNOW);
         FALL_THROUGH_BLOCKS.add(Material.CARROT);
         FALL_THROUGH_BLOCKS.add(Material.POTATO);
+        FALL_THROUGH_BLOCKS.add(Material.KELP_PLANT);
         FALL_THROUGH_BLOCKS.addAll(Tag.FENCES.getValues());
     }
 
@@ -722,7 +723,8 @@ public class TranslationTask extends AsyncTask {
                 hitGround = !testType.isAir() &&
                         !craft.getType().getPassthroughBlocks().contains(testType) &&
                         !(craft.getType().getHarvestBlocks().contains(testType) &&
-                        craft.getType().getHarvesterBladeBlocks().contains(ml.toBukkit(craft.getWorld()).getBlock().getType())) ||
+                        craft.getType().getHarvesterBladeBlocks().contains(ml.toBukkit(craft.getWorld()).getBlock().getType())) &&
+                        !hitBox.contains(dropped) ||
                         craft.getType().getMinHeightLimit(craft.getWorld()) == translated.translate(0, dropDistance + 1 , 0).getY();
 
                 if (hitGround) {
