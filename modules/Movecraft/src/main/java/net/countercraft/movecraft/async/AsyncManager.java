@@ -406,6 +406,7 @@ public class AsyncManager extends BukkitRunnable {
             }
             int maxFadeBlocks = (int) (hitBox.size() *  (Settings.FadePercentageOfWreckPerCycle / 100.0));
             //Iterate hitbox as a set to get more random locations
+            BlockData airBlockData = Material.AIR.createBlockData();
             for (MovecraftLocation location : hitBox.asSet()){
                 if (processedFadeLocs.get(world).contains(location)) {
                     continue;
@@ -420,7 +421,7 @@ public class AsyncManager extends BukkitRunnable {
                 }
                 fadedBlocks++;
                 processedFadeLocs.get(world).add(location);
-                BlockData phaseBlock = phaseBlocks.getOrDefault(bLoc, Material.AIR.createBlockData());
+                BlockData phaseBlock = phaseBlocks.getOrDefault(bLoc, airBlockData);
                 commands.add(new BlockCreateCommand(world, location, phaseBlock));
                 
             }
