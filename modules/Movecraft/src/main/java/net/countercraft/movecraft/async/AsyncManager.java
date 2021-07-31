@@ -591,10 +591,10 @@ public class AsyncManager extends BukkitRunnable {
                 }
             }
 
-            if (type != Material.FIRE && type != Material.AIR && type != Material.CAVE_AIR && type != Material.VOID_AIR) {
+            if (type != Material.FIRE && !type.isAir()) {
                 totalNonNegligibleBlocks++;
             }
-            if (type != Material.FIRE && type != Material.AIR && type != Material.WATER && type != Material.CAVE_AIR && type != Material.VOID_AIR) {
+            if (type != Material.FIRE && !type.isAir()) {
                 totalNonNegligibleWaterBlocks++;
             }
         }

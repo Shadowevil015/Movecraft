@@ -471,7 +471,7 @@ public abstract class BaseCraft implements Craft{
                 Material material = w.getBlockAt(posX, posY, posZ).getType();
                 if (material == Material.WATER)
                     numWater++;
-                if (material == Material.AIR)
+                if (material.isAir())
                     numAir++;
             }
             posZ = hitBox.getMaxZ() + 1;
@@ -479,7 +479,7 @@ public abstract class BaseCraft implements Craft{
                 Material material = w.getBlockAt(posX, posY, posZ).getType();
                 if (material == Material.WATER)
                     numWater++;
-                if (material == Material.AIR)
+                if (material.isAir())
                     numAir++;
             }
             posX = hitBox.getMinX() - 1;
@@ -487,7 +487,7 @@ public abstract class BaseCraft implements Craft{
                 Material material = w.getBlockAt(posX, posY, posZ).getType();
                 if (material == Material.WATER)
                     numWater++;
-                if (material == Material.AIR)
+                if (material.isAir())
                     numAir++;
             }
             posX = hitBox.getMaxX() + 1;
@@ -495,7 +495,7 @@ public abstract class BaseCraft implements Craft{
                 Material material = w.getBlockAt(posX, posY, posZ).getType();
                 if (material == Material.WATER)
                     numWater++;
-                if (material == Material.AIR)
+                if (material.isAir())
                     numAir++;
             }
             if (numWater > numAir) {
