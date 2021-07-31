@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Tag;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
@@ -72,11 +73,15 @@ public final class CruiseSign implements Listener{
             sign.setColor(DyeColor.GREEN);
             sign.setGlowingText(true);
 
-            if(sign.getBlockData() instanceof WallSign) {
-                c.setCruiseDirection(CruiseDirection.fromBlockFace(((WallSign) sign.getBlockData()).getFacing()));
+            BlockFace face;
+            if (Tag.WALL_SIGNS.isTagged(event.getClickedBlock().getType())) {
+                org.bukkit.block.data.type.WallSign data = (org.bukkit.block.data.type.WallSign) sign.getBlockData();
+                face = data.getFacing();
             } else {
-                c.setCruiseDirection(CruiseDirection.NONE);
+                org.bukkit.block.data.type.Sign data = (org.bukkit.block.data.type.Sign) sign.getBlockData();
+                face = data.getRotation();
             }
+            c.setCruiseDirection(CruiseDirection.fromBlockFace(face));
             c.setLastCruiseUpdate(System.currentTimeMillis());
             c.setCruising(true);
             c.resetSigns(sign);
