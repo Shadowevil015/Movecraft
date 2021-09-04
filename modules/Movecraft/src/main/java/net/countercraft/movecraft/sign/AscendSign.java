@@ -33,9 +33,9 @@ public class AscendSign implements Listener {
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Ascend: ON")) {
                     sign.setLine(0, "Ascend: OFF");
-                    //sign.update();
                     sign.setColor(DyeColor.RED);
                     sign.setGlowingText(true);
+                    sign.update();
                 }
             }
         }
@@ -66,9 +66,9 @@ public class AscendSign implements Listener {
             }
             //c.resetSigns(true, false, true);
             sign.setLine(0, "Ascend: ON");
-            //sign.update(true);
             sign.setColor(DyeColor.GREEN);
             sign.setGlowingText(true);
+            sign.update(true);
 
             c.setCruiseDirection(CruiseDirection.UP);
             c.setLastCruiseUpdate(System.currentTimeMillis());
@@ -90,7 +90,7 @@ public class AscendSign implements Listener {
         sign.setLine(0, "Ascend: OFF");
         sign.setColor(DyeColor.RED);
         sign.setGlowingText(true);
-        //sign.update(true);
+        sign.update(true);
 
         c.setCruising(false);
         c.resetSigns(sign);

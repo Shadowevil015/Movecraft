@@ -32,9 +32,9 @@ public final class DescendSign implements Listener{
                 Sign sign = (Sign) state;
                 if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Descend: ON")) {
                     sign.setLine(0, "Descend: OFF");
-                    //sign.update();
                     sign.setColor(DyeColor.RED);
                     sign.setGlowingText(true);
+                    sign.update();
                 }
             }
         }
@@ -63,9 +63,9 @@ public final class DescendSign implements Listener{
             }
             //c.resetSigns(true, true, false);
             sign.setLine(0, "Descend: ON");
-            //sign.update(true);
             sign.setColor(DyeColor.GREEN);
             sign.setGlowingText(true);
+            sign.update(true);
 
             c.setCruiseDirection(CruiseDirection.DOWN);
             c.setLastCruiseUpdate(System.currentTimeMillis());
@@ -81,9 +81,9 @@ public final class DescendSign implements Listener{
             Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
             if (c != null && c.getType().getCanCruise()) {
                 sign.setLine(0, "Descend: OFF");
-                //sign.update(true);
                 sign.setColor(DyeColor.RED);
                 sign.setGlowingText(true);
+                sign.update(true);
                 c.setCruising(false);
                 c.resetSigns(sign);
             }
