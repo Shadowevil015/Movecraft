@@ -146,7 +146,7 @@ public class TranslationTask extends AsyncTask {
             Set<MovecraftChunk> chunksToLoad = ChunkManager.getChunks(oldHitBox, world, dx, dy, dz);
             MovecraftChunk.addSurroundingChunks(chunksToLoad, 2);
             ChunkManager.checkChunks(chunksToLoad);
-            if (!chunksToLoad.isEmpty()) {
+            if (!chunksToLoad.isEmpty() && !craft.getSinking()) {
                 ChunkManager.syncLoadChunks(chunksToLoad).get();
             }
 
