@@ -132,11 +132,11 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             final WorldHandler handler = Movecraft.getInstance().getWorldHandler();
             for (MovecraftLocation location : failed) {
-                var data = location.toBukkit(world).getBlock().getBlockData();
-                if (!passthroughBlocks.contains(data.getMaterial())) {
+                var block = location.toBukkit(craft.getWorld()).getBlock();
+                if (!passthroughBlocks.contains(block.getType())) {
                     continue;
                 }
-                craft.getPhaseBlocks().put(location.toBukkit(world), data);
+                craft.getPhaseBlocks().put(location.toBukkit(world), block.getBlockData());
             }
             //translate the craft
             handler.translateCraft(craft, displacement,world);
@@ -180,9 +180,9 @@ public class CraftTranslateCommand extends UpdateCommand {
             BlockData airBlockData = Material.AIR.createBlockData();
             for (MovecraftLocation location : failed) {
                 Location bukkit = location.toBukkit(oldWorld);
-                var data = bukkit.getBlock().getBlockData();
-                if (passthroughBlocks.contains(data.getMaterial())) {
-                    craft.getPhaseBlocks().put(bukkit, data);
+                var block = bukkit.getBlock();
+                if (passthroughBlocks.contains(block.getType())) {
+                    craft.getPhaseBlocks().put(bukkit, block.getBlockData());
                     handler.setBlockFast(bukkit, airBlockData);
 
                 }

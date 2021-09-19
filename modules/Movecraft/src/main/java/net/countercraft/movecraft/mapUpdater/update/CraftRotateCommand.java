@@ -84,9 +84,9 @@ public class CraftRotateCommand extends UpdateCommand {
             final HitBox to = craft.getHitBox().difference(originalLocations);
 
             for (MovecraftLocation location : to) {
-                var data = location.toBukkit(craft.getWorld()).getBlock().getBlockData();
-                if (passthroughBlocks.contains(data.getMaterial())) {
-                    craft.getPhaseBlocks().put(location.toBukkit(craft.getWorld()), data);
+                Block block = location.toBukkit(craft.getWorld()).getBlock();
+                if (passthroughBlocks.contains(block.getType())) {
+                    craft.getPhaseBlocks().put(location.toBukkit(craft.getWorld()), block.getBlockData());
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
@@ -176,9 +176,9 @@ public class CraftRotateCommand extends UpdateCommand {
             BlockData airBlockData = Material.AIR.createBlockData();
             for (MovecraftLocation location : interior) {
                 Location bukkit = location.toBukkit(craft.getWorld());
-                var data = bukkit.getBlock().getBlockData();
-                if (passthroughBlocks.contains(data.getMaterial())) {
-                    craft.getPhaseBlocks().put(bukkit, data);
+                var block = bukkit.getBlock();
+                if (passthroughBlocks.contains(block.getType())) {
+                    craft.getPhaseBlocks().put(bukkit, block.getBlockData());
                     handler.setBlockFast(bukkit, airBlockData);
 
                 }

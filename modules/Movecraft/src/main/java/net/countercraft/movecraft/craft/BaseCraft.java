@@ -125,7 +125,7 @@ public abstract class BaseCraft implements Craft{
 
     public void detect(@Nullable Player player, @NotNull Player notificationPlayer, MovecraftLocation startPoint) {
         this.setNotificationPlayer(notificationPlayer);
-        this.setAudience(Movecraft.getAdventure().player(notificationPlayer));
+        this.setAudience(notificationPlayer); // CCNet: We can use the Player object directly
         WorldManager.INSTANCE.submit(new DetectionTask(this, startPoint, CachedMovecraftWorld.of(w), player));
     }
 

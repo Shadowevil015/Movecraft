@@ -196,8 +196,8 @@ public class Movecraft extends JavaPlugin {
                 worldHandler.disableShadow(typ);
             }
         }
-        adventure = BukkitAudiences.create(this);
-        
+        //adventure = BukkitAudiences.create(this); CCNet - causes an error on Paper, ensure references to this.getAdventure() are all replaced
+
         if (shuttingDown && Settings.IGNORE_RESET) {
             logger.log(
                     Level.SEVERE,
