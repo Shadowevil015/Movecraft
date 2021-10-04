@@ -323,6 +323,17 @@ public class TranslationTask extends AsyncTask {
                 fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft over block"), testType.name().toLowerCase().replace("_", " ")));
             }
         }
+        else if (craft.getType().getOnlyHoverBlocks().size() > 0){
+            MovecraftLocation test = new MovecraftLocation(newHitBox.getMidPoint().getX(), newHitBox.getMinY(), newHitBox.getMidPoint().getZ());
+            test = test.translate(0, -1, 0);
+            while (test.toBukkit(world).getBlock().getType().isAir()){
+                test = test.translate(0, -1, 0);
+            }
+            Material testType = test.toBukkit(world).getBlock().getType();
+            if (!craft.getType().getOnlyHoverBlocks().contains(testType)){
+                fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft not over block"), testType.name().toLowerCase().replace("_", " ")));
+            }
+        }
         //call event
         CraftTranslateEvent translateEvent = new CraftTranslateEvent(craft, oldHitBox, newHitBox, world);
         Bukkit.getServer().getPluginManager().callEvent(translateEvent);

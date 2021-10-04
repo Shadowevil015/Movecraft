@@ -110,6 +110,7 @@ final public class CraftType {
     @NotNull private final EnumSet<Material> harvesterBladeBlocks;
     @NotNull private final EnumSet<Material> passthroughBlocks;
     @NotNull private final EnumSet<Material> forbiddenHoverOverBlocks;
+    @NotNull private final EnumSet<Material> onlyHoverOverBlocks;
     @NotNull private final Map<Material, Double> fuelTypes;
     @NotNull private final Set<String> disableTeleportToWorlds;
     private final int teleportationCooldown;
@@ -245,6 +246,9 @@ final public class CraftType {
         if (!canHoverOverWater){
             forbiddenHoverOverBlocks.add(Material.WATER);
         }
+
+        onlyHoverOverBlocks = data.getMaterialsOrEmpty("onlyHoverOverBlocks");
+
         allowVerticalTakeoffAndLanding = data.getBooleanOrDefault("allowVerticalTakeoffAndLanding", true);
         dynamicLagSpeedFactor = data.getDoubleOrDefault("dynamicLagSpeedFactor", 0d);
         dynamicLagPowerFactor = data.getDoubleOrDefault("dynamicLagPowerFactor", 0d);
@@ -687,6 +691,11 @@ final public class CraftType {
     @NotNull
     public Set<Material> getForbiddenHoverOverBlocks() {
         return forbiddenHoverOverBlocks;
+    }
+
+    @NotNull
+    public Set<Material> getOnlyHoverBlocks() {
+        return onlyHoverOverBlocks;
     }
 
     public int getGravityDropDistance() {
