@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class SetHitBox implements MutableHitBox{
-    private final Set<MovecraftLocation> locations = new HashSet<>();
+    private final Set<MovecraftLocation> locations = new LinkedHashSet<>();
     private final Long2IntMap localMinY;
     private boolean invalidateBounds = false;
     private int minX = Integer.MAX_VALUE;
