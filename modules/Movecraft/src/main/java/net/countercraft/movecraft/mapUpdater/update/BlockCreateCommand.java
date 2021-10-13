@@ -44,7 +44,7 @@ public class BlockCreateCommand extends UpdateCommand {
         // now do the block updates, move entities when you set the block they are on
         Movecraft.getInstance().getWorldHandler().setBlockFast(newBlockLocation.toBukkit(world), data);
         //craft.incrementBlockUpdates();
-        newBlockLocation.toBukkit(world).getBlock().getState().update(false, false);
+        newBlockLocation.toBukkit(world).getBlock().getState(false).update(false, false);
 
         //Do comperator stuff
 
