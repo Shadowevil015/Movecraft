@@ -331,7 +331,7 @@ public class TranslationTask extends AsyncTask {
             }
             Material testType = test.toBukkit(world).getBlock().getType();
             if (!craft.getType().getOnlyHoverBlocks().contains(testType)){
-                fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft not over block"), testType.name().toLowerCase().replace("_", " ")));
+                fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft over block"), testType.name().toLowerCase().replace("_", " ")));
             }
         }
         //call event

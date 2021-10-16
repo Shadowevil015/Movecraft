@@ -218,7 +218,7 @@ public class IWorldHandler extends WorldHandler {
 
         LevelChunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.sendBlockUpdated(position, data, data, 3);
-        world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
+        //world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
         chunk.markUnsaved();
     }
 
