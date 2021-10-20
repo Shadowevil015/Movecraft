@@ -6,6 +6,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.ManOverboardEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.MathUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -59,6 +60,10 @@ public class ManOverboardCommand implements CommandExecutor{
 
         ManOverboardEvent event = new ManOverboardEvent(craft, telPoint);
         Bukkit.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            player.sendMessage(Component.text(event.getFailMessage()));
+            return true;
+        }
 
         player.setVelocity(new Vector(0, 0, 0));
         player.setFallDistance(0);
