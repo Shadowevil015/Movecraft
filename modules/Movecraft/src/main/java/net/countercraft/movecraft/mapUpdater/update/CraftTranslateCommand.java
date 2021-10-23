@@ -318,9 +318,10 @@ public class CraftTranslateCommand extends UpdateCommand {
             BlockState state = block.getState(false);
             if (state instanceof Sign) {
                 Sign sign = (Sign) state;
-                if(!signs.containsKey(sign.getLines()))
-                    signs.put(sign.getLines(), new ArrayList<>());
-                signs.get(sign.getLines()).add(location);
+                String[] lines = sign.getLines();
+                if(!signs.containsKey(lines))
+                    signs.put(lines, new ArrayList<>());
+                signs.get(lines).add(location);
                 signStates.put(location, sign);
             }
         }
