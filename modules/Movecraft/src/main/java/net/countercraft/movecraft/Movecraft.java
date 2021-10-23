@@ -17,6 +17,7 @@
 
 package net.countercraft.movecraft;
 
+import io.github.retrooper.packetevents.PacketEvents;
 import net.countercraft.movecraft.async.AsyncManager;
 import net.countercraft.movecraft.commands.ContactsCommand;
 import net.countercraft.movecraft.commands.CraftInfoCommand;
@@ -110,6 +111,8 @@ public class Movecraft extends JavaPlugin {
             Settings.IsPaper=false;
         }
 
+        PacketEvents.create(this);
+        PacketEvents.get().load();
 
         Settings.LOCALE = getConfig().getString("Locale");
         Settings.Debug = getConfig().getBoolean("Debug", false);

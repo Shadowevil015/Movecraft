@@ -9,11 +9,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Entities {
-
+    /*
     private static Method getID = null;
     private static Method getType = null;
     private static Constructor<?> minecraftKey = null;
     private static Object registryInstance = null;
+
 
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
@@ -30,6 +31,7 @@ public class Entities {
             e.printStackTrace();
         }
     }
+     */
 
     /**
      * Spigot has stopped updating their internal entity ID's, thus breaking any context in which their use is required
@@ -39,13 +41,11 @@ public class Entities {
      */
     @SuppressWarnings("deprecation")
     public static int getTypeID(EntityType type){
-        try {
-            var key = minecraftKey.newInstance(type.getName());
-            var baseType = getType.invoke(registryInstance, key);
-            return (int) getID.invoke(registryInstance, baseType);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-            return -1;
+        switch (type) {
+            case MAGMA_CUBE:
+                return 48;
+            default:
+                return -1;
         }
     }
 }

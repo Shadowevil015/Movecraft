@@ -37,15 +37,7 @@
         </repository>
         <repository>
             <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
-        </repository>
-        <repository>
-            <id>IntellectualSites Releases</id>
-            <url>https://mvn.intellectualsites.com/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>IntellectualSites Snapshots</id>
-            <url>https://mvn.intellectualsites.com/content/repositories/snapshots/</url>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
         </repository>
     </repositories>
 
@@ -123,25 +115,11 @@
             <version>4.7.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- FAWE Core API -->
         <dependency>
-            <groupId>com.fastasyncworldedit</groupId>
-            <artifactId>FastAsyncWorldEdit-Core</artifactId>
-            <version>1.17-351</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- FAWE Bukkit API -->
-        <dependency>
-            <groupId>com.fastasyncworldedit</groupId>
-            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
-            <version>1.17-351</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
-                    <groupId>*</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents</artifactId>
+            <version>1.8-pre-18</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -231,6 +209,10 @@
                                     <pattern>it.unimi</pattern>
                                     <shadedPattern>net.countercraft.movecraft.libs.it.unimi</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.github.retrooper.packetevents</pattern>
+                                    <shadedPattern>net.countercraft.movecraft.libs.packetevents</shadedPattern>
+                                </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -273,6 +255,7 @@
                                     <include>it.unimi.dsi:fastutil*</include>
                                     <include>net.kyori:adventure*</include>
                                     <include>net.kyori:examination*</include>
+                                    <include>com.github.retrooper:packetevents*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

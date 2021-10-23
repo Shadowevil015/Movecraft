@@ -6,6 +6,8 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.google.common.primitives.Ints;
+import io.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.packetwrappers.play.out.entitydestroy.WrappedPacketOutEntityDestroy;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.support.AsyncChunk;
 import net.countercraft.movecraft.util.packets.WrapperPlayServerEntityDestroy;
@@ -37,7 +39,7 @@ public class BlockHighlight implements Listener {
     static {
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         String version = packageName.substring(packageName.lastIndexOf('.') + 1);
-        disabled = Settings.CompatibilityMode || version.contains("17");
+        disabled = Settings.CompatibilityMode;
     }
     private static final byte INVISIBLE = (byte) 0x20;
     private static final byte GLOWING = (byte) 0x40;
@@ -87,9 +89,10 @@ public class BlockHighlight implements Listener {
     public static void removeHighlights(int[] ids, Player player){
         if(disabled)
             return;
-        var packet = new WrapperPlayServerEntityDestroy();
-        packet.setEntityIds(ids);
-        packet.sendPacket(player);
+        for (int id: ids) {
+            var packet = new WrappedPacketOutEntityDestroy(id);
+            PacketEvents.get().getPlayerUtils().sendPacket(player, packet);
+        }
     }
 
     private static WrapperPlayServerScoreboardTeam createTeam(){
