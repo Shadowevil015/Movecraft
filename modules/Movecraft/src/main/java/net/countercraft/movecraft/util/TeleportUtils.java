@@ -50,12 +50,13 @@ public class TeleportUtils {
         return field;
     }
 
-    public static void teleport(Player player, Location location) {
+    public static void teleport(Player player, Location location, float yawChange) {
+
         double x = location.getX();
         double y = location.getY();
         double z = location.getZ();
         ServerPlayer handle = ((CraftPlayer) player).getHandle();
-        if (handle.containerMenu != handle.inventoryMenu) handle.closeContainer();
+        //if (handle.containerMenu != handle.inventoryMenu) handle.closeContainer();
         handle.absMoveTo(x, y, z, handle.getYRot(), handle.getXRot());
         ServerGamePacketListenerImpl connection = handle.connection;
         int teleportAwait = 0;
@@ -72,6 +73,6 @@ public class TeleportUtils {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        connection.send(new ClientboundPlayerPositionPacket(x, y, z, 0, 0, TELEPORT_FLAGS, teleportAwait, false));
+        connection.send(new ClientboundPlayerPositionPacket(x, y, z, yawChange, 0, TELEPORT_FLAGS, teleportAwait, false));
     }
 }
