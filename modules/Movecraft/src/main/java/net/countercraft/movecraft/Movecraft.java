@@ -35,7 +35,6 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.listener.BlockListener;
 import net.countercraft.movecraft.listener.InteractListener;
 import net.countercraft.movecraft.listener.PlayerListener;
-import net.countercraft.movecraft.listener.TranslationListener;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.MapUpdateManager;
 import net.countercraft.movecraft.processing.WorldManager;
@@ -223,7 +222,7 @@ public class Movecraft extends JavaPlugin {
 
             getServer().getPluginManager().registerEvents(new InteractListener(), this);
             getServer().getPluginManager().registerEvents(new BlockHighlight(), this);
-            getServer().getPluginManager().registerEvents(new TranslationListener(), this);
+            //getServer().getPluginManager().registerEvents(new TranslationListener(), this);
 
             this.getCommand("movecraft").setExecutor(new MovecraftCommand());
             this.getCommand("release").setExecutor(new ReleaseCommand());
