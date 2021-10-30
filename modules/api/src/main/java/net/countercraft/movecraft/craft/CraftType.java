@@ -680,7 +680,7 @@ final public class CraftType {
     }
 
     @NotNull
-    public Set<Material> getPassthroughBlocks() {
+    public EnumSet<Material> getPassthroughBlocks() {
         return passthroughBlocks;
     }
 
@@ -689,12 +689,12 @@ final public class CraftType {
     }
 
     @NotNull
-    public Set<Material> getForbiddenHoverOverBlocks() {
+    public EnumSet<Material> getForbiddenHoverOverBlocks() {
         return forbiddenHoverOverBlocks;
     }
 
     @NotNull
-    public Set<Material> getOnlyHoverBlocks() {
+    public EnumSet<Material> getOnlyHoverBlocks() {
         return onlyHoverOverBlocks;
     }
 

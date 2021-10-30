@@ -29,20 +29,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class CraftTranslateCommand extends UpdateCommand {
@@ -75,7 +62,7 @@ public class CraftTranslateCommand extends UpdateCommand {
         }
         long time = System.nanoTime();
         World oldWorld = craft.getWorld();
-        final Set<Material> passthroughBlocks = new HashSet<>(craft.getType().getPassthroughBlocks());
+        final EnumSet<Material> passthroughBlocks = craft.getType().getPassthroughBlocks();
         if(craft.getSinking()){
             passthroughBlocks.add(Material.WATER);
             passthroughBlocks.addAll(Tag.LEAVES.getValues());
