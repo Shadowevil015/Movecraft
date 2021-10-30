@@ -57,6 +57,11 @@
         </dependency>
                 -->
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
@@ -256,6 +261,7 @@
                                     <include>net.kyori:adventure*</include>
                                     <include>net.kyori:examination*</include>
                                     <include>com.github.retrooper:packetevents*</include>
+                                    <include>org.apache.commons:commons-math3*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

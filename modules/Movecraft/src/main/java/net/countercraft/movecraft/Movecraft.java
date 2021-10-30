@@ -30,6 +30,7 @@ import net.countercraft.movecraft.commands.PilotCommand;
 import net.countercraft.movecraft.commands.ReleaseCommand;
 import net.countercraft.movecraft.commands.RotateCommand;
 import net.countercraft.movecraft.commands.ScuttleCommand;
+import net.countercraft.movecraft.compat.v1_17_R1.IWorldHandler;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.ChunkManager;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -142,11 +143,14 @@ public class Movecraft extends JavaPlugin {
         String packageName = this.getServer().getClass().getPackage().getName();
         String version = packageName.substring(packageName.lastIndexOf('.') + 1);
         try {
+            this.worldHandler = new IWorldHandler(this);
+            /*
             final Class<?> clazz = Class.forName("net.countercraft.movecraft.compat." + version + ".IWorldHandler");
             // Check if we have a NMSHandler class at that location.
             if (WorldHandler.class.isAssignableFrom(clazz)) { // Make sure it actually implements NMS
                 this.worldHandler = (WorldHandler) clazz.getConstructor().newInstance(); // Set our handler
             }
+             */
         } catch (final Exception e) {
             e.printStackTrace();
             this.getLogger().severe(I18nSupport.getInternationalisedString("Startup - Version Not Supported"));

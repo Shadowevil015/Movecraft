@@ -16,19 +16,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import org.apache.commons.math3.util.Pair;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class IWorldHandler extends WorldHandler {
@@ -40,14 +39,30 @@ public class IWorldHandler extends WorldHandler {
         ROTATION[MovecraftRotation.ANTICLOCKWISE.ordinal()] = Rotation.COUNTERCLOCKWISE_90;
     }
     private final NextTickProvider tickProvider = new NextTickProvider();
+    private final Queue<Pair<Level, BlockPos>> lightingPosQueue = new LinkedList<>();
+    private boolean queueInUse = false;
 
-    public IWorldHandler() {}
+    public IWorldHandler(Plugin plugin) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!queueInUse) {
+                    while (!lightingPosQueue.isEmpty()) {
+                        Pair<Level, BlockPos> block = lightingPosQueue.poll();
+                        block.getFirst().getLightEngine().checkBlock(block.getSecond());
+                    }
+                    queueInUse = false;
+                }
+            }
+        }.runTaskTimerAsynchronously(plugin, 0L, 1L);
+    }
 
 //    @Override
 //    public void addPlayerLocation(Player player, double x, double y, double z, float yaw, float pitch){
 //        ServerPlayer ePlayer = ((CraftPlayer) player).getHandle();
 //        ePlayer.connection.teleport(x, y, z, yaw, pitch, EnumSet.allOf(ClientboundPlayerPositionPacket.RelativeArgument.class));
 //    }
+
 
     @Override
     public void rotateCraft(@NotNull Craft craft, @NotNull MovecraftLocation originPoint, @NotNull MovecraftRotation rotation) {
@@ -218,7 +233,8 @@ public class IWorldHandler extends WorldHandler {
 
         LevelChunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.sendBlockUpdated(position, data, data, 3);
-        world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
+        lightingPosQueue.add(new Pair<>(world, position));
+        //world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
         chunk.markUnsaved();
     }
 
