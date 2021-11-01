@@ -80,7 +80,8 @@ public class CraftTranslateCommand extends UpdateCommand {
             for (MovecraftLocation movecraftLocation : craft.getHitBox()) {
                 originalLocations.add(movecraftLocation.subtract(displacement));
             }
-            final Set<MovecraftLocation> to = Sets.difference(craft.getHitBox().asSet(), originalLocations.asSet());
+            final Set<MovecraftLocation> craftHitBoxSet = craft.getHitBox().asSet();
+            final Set<MovecraftLocation> to = Sets.difference(craftHitBoxSet, originalLocations.asSet());
             //place phased blocks
             for (MovecraftLocation location : to) {
                 var data = location.toBukkit(world).getBlock().getBlockData();
@@ -89,7 +90,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
-            final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craft.getHitBox().asSet());
+            final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craftHitBoxSet);
 
             //place phased blocks
             final Set<Location> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
@@ -108,7 +109,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                     new SolidHitBox(new MovecraftLocation(minX, minY, minZ), new MovecraftLocation(maxX, minY, maxZ))};
             final SetHitBox validExterior = new SetHitBox();
             for (HitBox hitBox : surfaces) {
-                validExterior.addAll(Sets.difference(hitBox.asSet(),craft.getHitBox().asSet()));
+                validExterior.addAll(Sets.difference(hitBox.asSet(),craftHitBoxSet));
             }
 
             //Check to see which locations in the from set are actually outside of the craft
@@ -119,11 +120,12 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             final WorldHandler handler = Movecraft.getInstance().getWorldHandler();
             for (MovecraftLocation location : failed) {
-                var block = location.toBukkit(craft.getWorld()).getBlock();
+                var bukkit = location.toBukkit(world);
+                var block = bukkit.getBlock();
                 if (!passthroughBlocks.contains(block.getType())) {
                     continue;
                 }
-                craft.getPhaseBlocks().put(location.toBukkit(world), block.getBlockData());
+                craft.getPhaseBlocks().put(bukkit, block.getBlockData());
             }
             //translate the craft
             handler.translateCraft(craft, displacement,world);
@@ -134,7 +136,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             for (MovecraftLocation l : failed){
                 MovecraftLocation orig = l.subtract(displacement);
-                if (craft.getHitBox().contains(orig) || failed.contains(orig)){
+                if (failed.contains(orig) || craft.getHitBox().contains(orig)){
                     continue;
                 }
                 confirmed.add(orig);
@@ -158,7 +160,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             for(MovecraftLocation location : originalLocations){
                 Location bukkit = location.toBukkit(oldWorld);
-                if(!craft.getHitBox().contains(location) && craft.getPhaseBlocks().containsKey(bukkit)){
+                if(craft.getPhaseBlocks().containsKey(bukkit) && !craft.getHitBox().contains(location)){
                     var phaseBlock = craft.getPhaseBlocks().remove(bukkit);
                     handler.setBlockFast(bukkit, phaseBlock);
                 }
