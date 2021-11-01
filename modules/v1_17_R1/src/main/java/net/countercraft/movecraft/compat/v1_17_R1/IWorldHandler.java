@@ -46,7 +46,8 @@ public class IWorldHandler extends WorldHandler {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!queueInUse) {
+                if (!queueInUse && !lightingPosQueue.isEmpty()) {
+                    queueInUse = true;
                     while (!lightingPosQueue.isEmpty()) {
                         Pair<Level, BlockPos> block = lightingPosQueue.poll();
                         block.getFirst().getLightEngine().checkBlock(block.getSecond());
