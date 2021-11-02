@@ -86,7 +86,8 @@ public class IWorldHandler extends WorldHandler {
             BlockEntity tile = removeBlockEntity(nativeWorld,position);
             if(tile == null)
                 continue;
-//            tile.a(ROTATION[rotation.ordinal()]);
+            tile.setBlockState(tile.getBlockState().rotate(ROTATION[rotation.ordinal()]));
+            //tile.a(ROTATION[rotation.ordinal()]);
             //get the nextTick to move with the tile
             tiles.add(new TileHolder(tile, tickProvider.getNextTick(nativeWorld,position), position));
         }
