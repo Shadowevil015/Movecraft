@@ -324,14 +324,23 @@ public class TranslationTask extends AsyncTask {
             }
         }
         else if (craft.getType().getOnlyHoverBlocks().size() > 0){
-            MovecraftLocation test = new MovecraftLocation(newHitBox.getMidPoint().getX(), newHitBox.getMinY(), newHitBox.getMidPoint().getZ());
-            test = test.translate(0, -1, 0);
-            while (test.toBukkit(world).getBlock().getType().isAir()){
-                test = test.translate(0, -1, 0);
+            HashSet<Location> locationsToCheck = new HashSet<>();
+            for (MovecraftLocation ml: newHitBox) {
+                Location minimumPoint = new Location(world, ml.getX(), newHitBox.getMinYAt(ml.getX(), ml.getZ()) - 1, ml.getZ());
+                while (minimumPoint.getBlock().getType().isAir()) {
+                    minimumPoint = minimumPoint.subtract(0, 1, 0);
+                }
+                locationsToCheck.add(minimumPoint);
             }
-            Material testType = test.toBukkit(world).getBlock().getType();
-            if (!craft.getType().getOnlyHoverBlocks().contains(testType)){
-                fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft over block"), testType.name().toLowerCase().replace("_", " ")));
+            boolean canMove = false;
+            for (Location location: locationsToCheck) {
+                if (craft.getType().getOnlyHoverBlocks().contains(location.getBlock().getType())) {
+                    canMove = true;
+                    break;
+                }
+            }
+            if (!canMove){
+                fail(I18nSupport.getInternationalisedString("Translation - Failed Craft not over block"));
             }
         }
         //call event
