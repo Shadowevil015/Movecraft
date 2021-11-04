@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.apache.commons.math3.util.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unused")
 public class IWorldHandler extends WorldHandler {
@@ -40,22 +42,27 @@ public class IWorldHandler extends WorldHandler {
     }
     private final NextTickProvider tickProvider = new NextTickProvider();
     private final Queue<Pair<Level, BlockPos>> lightingPosQueue = new LinkedList<>();
-    private boolean queueInUse = false;
+    private AtomicBoolean queueInUse = new AtomicBoolean(false);
+    private final Plugin plugin;
 
     public IWorldHandler(Plugin plugin) {
+        this.plugin = plugin;
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!queueInUse && !lightingPosQueue.isEmpty()) {
-                    queueInUse = true;
-                    while (!lightingPosQueue.isEmpty()) {
-                        Pair<Level, BlockPos> block = lightingPosQueue.poll();
-                        block.getFirst().getLightEngine().checkBlock(block.getSecond());
-                    }
-                    queueInUse = false;
-                }
+                processLight();
             }
         }.runTaskTimerAsynchronously(plugin, 0L, 1L);
+    }
+
+    private void processLight() {
+        if (queueInUse.compareAndSet(false, true)) {
+            while (!lightingPosQueue.isEmpty()) {
+                Pair<Level, BlockPos> block = lightingPosQueue.poll();
+                block.getFirst().getLightEngine().checkBlock(block.getSecond());
+            }
+            queueInUse.set(false);
+        }
     }
 
 //    @Override
