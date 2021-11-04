@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called after a craft is translated.
+ * Called after a craft fails translation.
  * @see Craft
  */
 public class CraftFailTranslateEvent extends CraftEvent {

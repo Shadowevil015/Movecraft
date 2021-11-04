@@ -24,6 +24,7 @@ import net.countercraft.movecraft.async.AsyncTask;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.events.CraftFailRotateEvent;
 import net.countercraft.movecraft.events.CraftRotateEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.update.CraftRotateCommand;
@@ -87,12 +88,16 @@ public class RotationTask extends AsyncTask {
         if (getCraft().getDisabled() && (!getCraft().getSinking())) {
             failed = true;
             failMessage = I18nSupport.getInternationalisedString("Translation - Failed Craft Is Disabled");
+            CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+            Bukkit.getServer().getPluginManager().callEvent(failEvent);
         }
 
         // check for fuel, burn some from a furnace if needed. Blocks of coal are supported, in addition to coal and charcoal
         if (!checkFuel()) {
             failMessage = I18nSupport.getInternationalisedString("Translation - Failed Craft out of fuel");
             failed = true;
+            CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+            Bukkit.getServer().getPluginManager().callEvent(failEvent);
             return;
         }
         // if a subcraft, find the parent craft. If not a subcraft, it is it's own parent
@@ -115,12 +120,16 @@ public class RotationTask extends AsyncTask {
                     !checkChests(oldMaterial, newLocation)) {
                 failed = true;
                 failMessage = String.format(I18nSupport.getInternationalisedString("Rotation - Craft is obstructed") + " @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ());
+                CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+                Bukkit.getServer().getPluginManager().callEvent(failEvent);
                 break;
             }
 
             if (!withinWorldBorder(craft.getWorld(), newLocation)) {
                 failMessage = I18nSupport.getInternationalisedString("Rotation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ());
                 failed = true;
+                CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+                Bukkit.getServer().getPluginManager().callEvent(failEvent);
                 return;
             }
 
@@ -133,6 +142,8 @@ public class RotationTask extends AsyncTask {
             if (!oldHitBox.contains(newLocation)) {
                 failed = true;
                 failMessage = String.format(I18nSupport.getInternationalisedString("Rotation - Craft is obstructed") + " @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ());
+                CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+                Bukkit.getServer().getPluginManager().callEvent(failEvent);
                 break;
             }
         }
@@ -155,6 +166,8 @@ public class RotationTask extends AsyncTask {
         if(event.isCancelled()){
             failed = true;
             failMessage = event.getFailMessage();
+            CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
+            Bukkit.getServer().getPluginManager().callEvent(failEvent);
             return;
         }
         if (parentCraft != craft) {
