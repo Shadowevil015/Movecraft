@@ -694,7 +694,7 @@ final public class CraftType {
     }
 
     @NotNull
-    public EnumSet<Material> getOnlyHoverBlocks() {
+    public EnumSet<Material> getOnlyHoverOverBlocks() {
         return onlyHoverOverBlocks;
     }
 

@@ -453,6 +453,8 @@ public class TranslationTask extends AsyncTask {
     }
 
     private void fail(@NotNull String failMessage) {
+        CraftFailTranslateEvent failEvent = new CraftFailTranslateEvent(craft, dx, dy, dz, world);
+        Bukkit.getServer().getPluginManager().callEvent(failEvent);
         fail(failMessage, true);
     }
 
