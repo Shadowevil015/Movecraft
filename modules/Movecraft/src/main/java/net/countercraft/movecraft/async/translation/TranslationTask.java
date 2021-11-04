@@ -323,7 +323,7 @@ public class TranslationTask extends AsyncTask {
                 fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft over block"), testType.name().toLowerCase().replace("_", " ")));
             }
         }
-        else if (craft.getType().getOnlyHoverOverBlocks().size() > 0){
+        if (craft.getType().getOnlyHoverOverBlocks().size() > 0){
             HashSet<Location> locationsToCheck = new HashSet<>();
             for (MovecraftLocation ml: newHitBox) {
                 Location minimumPoint = new Location(world, ml.getX(), newHitBox.getMinYAt(ml.getX(), ml.getZ()) - 1, ml.getZ());
