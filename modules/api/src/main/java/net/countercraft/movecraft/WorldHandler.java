@@ -1,6 +1,7 @@
 package net.countercraft.movecraft;
 
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,6 +15,7 @@ public abstract class WorldHandler {
     public abstract void setBlockFast(@NotNull Location location, @NotNull BlockData data);
     public abstract void setBlockFast(@NotNull Location location, @NotNull MovecraftRotation rotation, @NotNull BlockData data);
     public abstract void disableShadow(@NotNull Material type);
+    public abstract void processLight(@NotNull World world, HitBox hitBox);
     public void addPlayerLocation(Player player, double x, double y, double z, float yaw, float pitch){
         Location playerLoc = player.getLocation();
         player.teleport(new Location(player.getWorld(), x + playerLoc.getX(),y + playerLoc.getY(),z + playerLoc.getZ(),yaw + playerLoc.getYaw(),pitch + playerLoc.getPitch()));

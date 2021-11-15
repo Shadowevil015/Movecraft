@@ -7,6 +7,7 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.CollectionUtils;
 import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.UnsafeUtils;
+import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -17,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.apache.commons.math3.util.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
@@ -41,28 +42,10 @@ public class IWorldHandler extends WorldHandler {
         ROTATION[MovecraftRotation.ANTICLOCKWISE.ordinal()] = Rotation.COUNTERCLOCKWISE_90;
     }
     private final NextTickProvider tickProvider = new NextTickProvider();
-    private final Queue<Pair<Level, BlockPos>> lightingPosQueue = new LinkedList<>();
-    private AtomicBoolean queueInUse = new AtomicBoolean(false);
     private final Plugin plugin;
 
     public IWorldHandler(Plugin plugin) {
         this.plugin = plugin;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                processLight();
-            }
-        }.runTaskTimerAsynchronously(plugin, 0L, 1L);
-    }
-
-    private void processLight() {
-        if (queueInUse.compareAndSet(false, true)) {
-            while (!lightingPosQueue.isEmpty()) {
-                Pair<Level, BlockPos> block = lightingPosQueue.poll();
-                block.getFirst().getLightEngine().checkBlock(block.getSecond());
-            }
-            queueInUse.set(false);
-        }
     }
 
 //    @Override
@@ -217,6 +200,19 @@ public class IWorldHandler extends WorldHandler {
         processRedstone(newPositions, nativeWorld);
     }
 
+    @Override
+    public void processLight(@NotNull World world, HitBox hitBox) {
+        ServerLevel nativeWorld = ((CraftWorld) world).getHandle();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (MovecraftLocation loc: hitBox) {
+                    nativeWorld.getLightEngine().checkBlock(locationToPosition(loc));
+                }
+            }
+        }.runTaskAsynchronously(plugin);
+    }
+
     @Nullable
     private BlockEntity removeBlockEntity(@NotNull Level world, @NotNull BlockPos position){
         return world.getChunkAt(position).blockEntities.remove(position);
@@ -242,7 +238,6 @@ public class IWorldHandler extends WorldHandler {
 
         LevelChunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
         world.sendBlockUpdated(position, data, data, 3);
-        lightingPosQueue.add(new Pair<>(world, position));
         //world.getLightEngine().checkBlock(position); // boolean corresponds to if chunk section empty
         chunk.markUnsaved();
     }

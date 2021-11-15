@@ -18,6 +18,7 @@
 package net.countercraft.movecraft.async.rotation;
 
 import net.countercraft.movecraft.CruiseDirection;
+import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.MovecraftRotation;
 import net.countercraft.movecraft.async.AsyncTask;
@@ -290,7 +291,8 @@ public class RotationTask extends AsyncTask {
             }
         }
 
-
+        Movecraft.getInstance().getWorldHandler().processLight(w, oldHitBox);
+        Movecraft.getInstance().getWorldHandler().processLight(w, newHitBox.difference(oldHitBox));
     }
 
     public MovecraftLocation getOriginPoint() {

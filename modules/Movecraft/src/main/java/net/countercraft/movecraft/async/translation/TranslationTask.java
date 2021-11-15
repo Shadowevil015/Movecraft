@@ -448,6 +448,9 @@ public class TranslationTask extends AsyncTask {
         }
         captureYield(harvestedBlocks);
 
+        Movecraft.getInstance().getWorldHandler().processLight(world, oldHitBox);
+        Movecraft.getInstance().getWorldHandler().processLight(world, newHitBox.difference(oldHitBox));
+
         final CraftPostTranslateEvent postTranslateEvent = new CraftPostTranslateEvent(craft, dx, dy, dz, world);
         Bukkit.getServer().getPluginManager().callEvent(postTranslateEvent);
     }
@@ -743,12 +746,13 @@ public class TranslationTask extends AsyncTask {
                 //obstructing the craft
                 MovecraftLocation dropped = translated.translate(0, dropDistance - 1 , 0);
                 Material testType = dropped.toBukkit(craft.getWorld()).getBlock().getType();
-                hitGround = !testType.isAir() &&
-                        !craft.getType().getPassthroughBlocks().contains(testType) &&
-                        !(craft.getType().getHarvestBlocks().contains(testType) &&
-                        craft.getType().getHarvesterBladeBlocks().contains(ml.toBukkit(craft.getWorld()).getBlock().getType())) &&
-                        !hitBox.contains(dropped) ||
-                        craft.getType().getMinHeightLimit(craft.getWorld()) == translated.translate(0, dropDistance + 1 , 0).getY();
+                hitGround = !testType.isAir(); // Not air
+                hitGround &= !craft.getType().getPassthroughBlocks().contains(testType); // Not a passthrough block
+                hitGround &= !hitBox.contains(dropped); // Not part of the craft
+                if(craft.getType().getHarvestBlocks().contains(testType) && craft.getType().getHarvesterBladeBlocks().contains(ml.toBukkit(craft.getWorld()).getBlock().getType()))
+                    hitGround = false; // Allow gravity to harvest blocks on the way down
+                if(craft.getType().getMinHeightLimit(craft.getWorld()) == translated.translate(0, dropDistance + 1 , 0).getY())
+                    hitGround = true; // Don't let the craft fall below the min height limit
 
                 if (hitGround) {
                     break;
