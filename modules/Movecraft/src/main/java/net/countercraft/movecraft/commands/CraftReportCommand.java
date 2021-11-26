@@ -41,7 +41,7 @@ public class CraftReportCommand implements CommandExecutor{
         for (Craft craft : CraftManager.getInstance()) {
             HitBox hitBox = craft.getHitBox();
             paginator.addLine((craft.getSinking() ? ChatColor.RED : craft.getDisabled() ? ChatColor.BLUE : "") +
-                    craft.getType().getCraftName() + " " +
+                    craft.getType().getCraftName() + " " + ChatColor.ITALIC + this.getCraftName(craft) +
                     ChatColor.RESET +
                     (craft instanceof PlayerCraft ? ((PlayerCraft) craft).getPlayer().getName() + " " : I18nSupport.getInternationalisedString("None") +" ")+
                     hitBox.size() + " @ " +
@@ -57,6 +57,12 @@ public class CraftReportCommand implements CommandExecutor{
         for(String line : paginator.getPage(page))
             commandSender.sendMessage(line);
         return true;
+    }
 
+    private String getCraftName(Craft craft) {
+        if (craft.getName().length() >= 1) {
+            return "(" + craft.getName() + ") ";
+        }
+        return "";
     }
 }
