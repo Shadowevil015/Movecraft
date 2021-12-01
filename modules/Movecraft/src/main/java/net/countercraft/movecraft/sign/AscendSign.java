@@ -4,6 +4,7 @@ import net.countercraft.movecraft.CruiseDirection;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -61,7 +62,7 @@ public class AscendSign implements Listener {
                 return;
             }
             Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
-            if (!c.getType().getCanCruise()) {
+            if (!c.getType().getBoolProperty(CraftType.CAN_CRUISE)) {
                 return;
             }
             //c.resetSigns(true, false, true);
@@ -75,7 +76,7 @@ public class AscendSign implements Listener {
             c.setCruising(true);
             c.resetSigns(sign);
 
-            if (!c.getType().getMoveEntities()) {
+            if (!c.getType().getBoolProperty(CraftType.MOVE_ENTITIES)) {
                 CraftManager.getInstance().addReleaseTask(c);
             }
             return;
@@ -84,7 +85,7 @@ public class AscendSign implements Listener {
             return;
         }
         Craft c = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
-        if (c == null || !c.getType().getCanCruise()) {
+        if (c == null || !c.getType().getBoolProperty(CraftType.CAN_CRUISE)) {
             return;
         }
         sign.setLine(0, "Ascend: OFF");

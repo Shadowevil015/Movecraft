@@ -11,9 +11,11 @@ import net.countercraft.movecraft.WorldHandler;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.events.SignTranslateEvent;
 import net.countercraft.movecraft.util.MathUtils;
+import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.util.hitboxes.SetHitBox;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
@@ -29,7 +31,20 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class CraftTranslateCommand extends UpdateCommand {
@@ -62,12 +77,11 @@ public class CraftTranslateCommand extends UpdateCommand {
         }
         long time = System.nanoTime();
         World oldWorld = craft.getWorld();
-        final EnumSet<Material> passthroughBlocks = craft.getType().getPassthroughBlocks();
+        final Set<Material> passthroughBlocks = new HashSet<>(craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS));
         if(craft.getSinking()){
-            passthroughBlocks.add(Material.WATER);
+            passthroughBlocks.addAll(Tags.FLUID);
             passthroughBlocks.addAll(Tag.LEAVES.getValues());
-            passthroughBlocks.add(Material.TALL_GRASS);
-            passthroughBlocks.add(Material.GRASS);
+            passthroughBlocks.addAll(Tags.SINKING_PASSTHROUGH);
         }
         if(passthroughBlocks.isEmpty()){
             //translate the craft
@@ -80,8 +94,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             for (MovecraftLocation movecraftLocation : craft.getHitBox()) {
                 originalLocations.add(movecraftLocation.subtract(displacement));
             }
-            final Set<MovecraftLocation> craftHitBoxSet = craft.getHitBox().asSet();
-            final Set<MovecraftLocation> to = Sets.difference(craftHitBoxSet, originalLocations.asSet());
+            final Set<MovecraftLocation> to = Sets.difference(craft.getHitBox().asSet(), originalLocations.asSet());
             //place phased blocks
             for (MovecraftLocation location : to) {
                 var data = location.toBukkit(world).getBlock().getBlockData();
@@ -90,7 +103,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
-            final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craftHitBoxSet);
+            final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craft.getHitBox().asSet());
 
             //place phased blocks
             final Set<Location> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
@@ -109,7 +122,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                     new SolidHitBox(new MovecraftLocation(minX, minY, minZ), new MovecraftLocation(maxX, minY, maxZ))};
             final SetHitBox validExterior = new SetHitBox();
             for (HitBox hitBox : surfaces) {
-                validExterior.addAll(Sets.difference(hitBox.asSet(),craftHitBoxSet));
+                validExterior.addAll(Sets.difference(hitBox.asSet(),craft.getHitBox().asSet()));
             }
 
             //Check to see which locations in the from set are actually outside of the craft

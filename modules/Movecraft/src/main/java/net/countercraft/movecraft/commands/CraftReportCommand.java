@@ -3,6 +3,7 @@ package net.countercraft.movecraft.commands;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
+import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.util.TopicPaginator;
@@ -60,8 +61,9 @@ public class CraftReportCommand implements CommandExecutor{
     }
 
     private String getCraftName(Craft craft) {
-        if (craft.getName().length() >= 1) {
-            return "(" + craft.getName() + ") ";
+        String name = craft.getType().getStringProperty(CraftType.NAME));
+        if (name.length() >= 1) {
+            return "(" + name + ") ";
         }
         return "";
     }
