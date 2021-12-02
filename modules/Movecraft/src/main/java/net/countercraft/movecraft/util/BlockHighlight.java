@@ -5,18 +5,15 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.google.common.primitives.Ints;
-import io.github.retrooper.packetevents.PacketEvents;
-import io.github.retrooper.packetevents.packetwrappers.play.out.entitydestroy.WrappedPacketOutEntityDestroy;
 import net.countercraft.movecraft.config.Settings;
-import net.countercraft.movecraft.support.AsyncChunk;
-import net.countercraft.movecraft.util.packets.WrapperPlayServerEntityDestroy;
 import net.countercraft.movecraft.util.packets.WrapperPlayServerEntityMetadata;
 import net.countercraft.movecraft.util.packets.WrapperPlayServerScoreboardTeam;
 import net.countercraft.movecraft.util.packets.WrapperPlayServerSpawnEntityLiving;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -24,7 +21,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -90,8 +86,8 @@ public class BlockHighlight implements Listener {
         if(disabled)
             return;
         for (int id: ids) {
-            var packet = new WrappedPacketOutEntityDestroy(id);
-            PacketEvents.get().getPlayerUtils().sendPacket(player, packet);
+            var packet = new WrapperPlayServerDestroyEntities(id);
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
 

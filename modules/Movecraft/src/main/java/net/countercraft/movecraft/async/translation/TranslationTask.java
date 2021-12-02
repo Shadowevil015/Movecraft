@@ -9,12 +9,7 @@ import net.countercraft.movecraft.craft.ChunkManager;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.events.CraftCollisionEvent;
-import net.countercraft.movecraft.events.CraftCollisionExplosionEvent;
-import net.countercraft.movecraft.events.CraftPreTranslateEvent;
-import net.countercraft.movecraft.events.CraftReleaseEvent;
-import net.countercraft.movecraft.events.CraftTranslateEvent;
-import net.countercraft.movecraft.events.ItemHarvestEvent;
+import net.countercraft.movecraft.events.*;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.mapUpdater.update.BlockCreateCommand;
 import net.countercraft.movecraft.mapUpdater.update.CraftTranslateCommand;
@@ -303,8 +298,7 @@ public class TranslationTask extends AsyncTask {
                 fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft over block"), testType.name().toLowerCase().replace("_", " ")));
             }
         }
-        //TODO: use new Movecraft property system
-        if (craft.getType().getOnlyHoverOverBlocks().size() > 0){
+        if (craft.getType().getMaterialSetProperty(CraftType.ONLY_HOVER_OVER_BLOCKS).size() > 0){
             HashSet<Location> locationsToCheck = new HashSet<>();
             for (MovecraftLocation ml: newHitBox) {
                 Location minimumPoint = new Location(world, ml.getX(), newHitBox.getMinYAt(ml.getX(), ml.getZ()) - 1, ml.getZ());
@@ -315,7 +309,7 @@ public class TranslationTask extends AsyncTask {
             }
             boolean canMove = false;
             for (Location location: locationsToCheck) {
-                if (craft.getType().getOnlyHoverOverBlocks().contains(location.getBlock().getType())) {
+                if (craft.getType().getMaterialSetProperty(CraftType.ONLY_HOVER_OVER_BLOCKS).contains(location.getBlock().getType())) {
                     canMove = true;
                     break;
                 }

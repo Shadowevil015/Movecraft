@@ -142,6 +142,7 @@ final public class CraftType {
     public static final NamespacedKey HARVESTER_BLADE_BLOCKS = buildKey("harvester_blade_blocks");
     public static final NamespacedKey PASSTHROUGH_BLOCKS = buildKey("passthrough_blocks");
     public static final NamespacedKey FORBIDDEN_HOVER_OVER_BLOCKS = buildKey("forbidden_hover_over_blocks");
+    public static final NamespacedKey ONLY_HOVER_OVER_BLOCKS = buildKey("only_hover_over_blocks");
     public static final NamespacedKey ALLOW_VERTICAL_TAKEOFF_AND_LANDING = buildKey("allow_vertical_takeoff_and_landing");
     public static final NamespacedKey DYNAMIC_LAG_SPEED_FACTOR = buildKey("dynamic_lag_speed_factor");
     public static final NamespacedKey DYNAMIC_LAG_POWER_FACTOR = buildKey("dynamic_lag_power_factor");
@@ -437,6 +438,7 @@ final public class CraftType {
         registerProperty(new MaterialSetProperty("harvesterBladeBlocks", HARVESTER_BLADE_BLOCKS, type -> EnumSet.noneOf(Material.class)));
         registerProperty(new MaterialSetProperty("passthroughBlocks", PASSTHROUGH_BLOCKS, type -> EnumSet.noneOf(Material.class)));
         registerProperty(new MaterialSetProperty("forbiddenHoverOverBlocks", FORBIDDEN_HOVER_OVER_BLOCKS, type -> EnumSet.noneOf(Material.class)));
+        registerProperty(new MaterialSetProperty("onlyHoverOverBlocks", ONLY_HOVER_OVER_BLOCKS, type -> EnumSet.noneOf(Material.class)));
         registerProperty(new BooleanProperty("allowVerticalTakeoffAndLanding", ALLOW_VERTICAL_TAKEOFF_AND_LANDING, type -> true));
         registerProperty(new DoubleProperty("dynamicLagSpeedFactor", DYNAMIC_LAG_SPEED_FACTOR, type -> 0D));
         registerProperty(new DoubleProperty("dynamicLagPowerFactor", DYNAMIC_LAG_POWER_FACTOR, type -> 0D));

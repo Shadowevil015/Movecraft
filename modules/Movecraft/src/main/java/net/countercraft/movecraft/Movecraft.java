@@ -17,7 +17,8 @@
 
 package net.countercraft.movecraft;
 
-import io.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.factory.bukkit.BukkitPacketEventsBuilder;
 import net.countercraft.movecraft.async.AsyncManager;
 import net.countercraft.movecraft.commands.ContactsCommand;
 import net.countercraft.movecraft.commands.CraftInfoCommand;
@@ -30,7 +31,7 @@ import net.countercraft.movecraft.commands.PilotCommand;
 import net.countercraft.movecraft.commands.ReleaseCommand;
 import net.countercraft.movecraft.commands.RotateCommand;
 import net.countercraft.movecraft.commands.ScuttleCommand;
-import net.countercraft.movecraft.compat.v1_17_R1.IWorldHandler;
+import net.countercraft.movecraft.compat.v1_18_R1.IWorldHandler;
 import net.countercraft.movecraft.config.Settings;
 import net.countercraft.movecraft.craft.ChunkManager;
 import net.countercraft.movecraft.craft.CraftManager;
@@ -58,7 +59,6 @@ import net.countercraft.movecraft.sign.StatusSign;
 import net.countercraft.movecraft.sign.SubcraftRotateSign;
 import net.countercraft.movecraft.sign.TeleportSign;
 import net.countercraft.movecraft.util.BlockHighlight;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -76,7 +76,7 @@ import java.util.logging.Logger;
 public class Movecraft extends JavaPlugin {
 
     private static Movecraft instance;
-    private static BukkitAudiences adventure = null;
+    //private static BukkitAudiences adventure = null;
     private Logger logger;
     private boolean shuttingDown;
     private WorldHandler worldHandler;
@@ -86,6 +86,7 @@ public class Movecraft extends JavaPlugin {
         return instance;
     }
 
+    /*
     @NotNull
     public static BukkitAudiences getAdventure(){
         if(adventure == null) {
@@ -93,14 +94,18 @@ public class Movecraft extends JavaPlugin {
         }
         return adventure;
     }
+     */
 
     @Override
     public void onDisable() {
         shuttingDown = true;
+        /*
         if(adventure != null) {
             adventure.close();
             adventure = null;
         }
+         */
+        PacketEvents.getAPI().terminate();
     }
 
     @Override
@@ -113,8 +118,7 @@ public class Movecraft extends JavaPlugin {
             Settings.IsPaper = false;
         }
 
-        PacketEvents.create(this);
-        PacketEvents.get().load();
+        PacketEvents.getAPI().init();
 
         Settings.LOCALE = getConfig().getString("Locale");
         Settings.Debug = getConfig().getBoolean("Debug", false);
@@ -277,7 +281,8 @@ public class Movecraft extends JavaPlugin {
         instance = this;
         logger = getLogger();
         this.saveDefaultConfig();
-
+        PacketEvents.setAPI(BukkitPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
     }
 
     private boolean initializeDatapack(){

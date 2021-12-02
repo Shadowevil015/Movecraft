@@ -37,7 +37,11 @@
         </repository>
         <repository>
             <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -64,27 +68,14 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.countercraft</groupId>
-            <artifactId>movecraft-v1_17_r1</artifactId>
-            <version>${revision}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>net.countercraft</groupId>
             <artifactId>movecraft-v1_18_r1</artifactId>
             <version>${revision}</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
-            <classifier>remapped-mojang</classifier>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.countercraft</groupId>
@@ -117,13 +108,13 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>4.8.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents</artifactId>
-            <version>1.8-pre-18</version>
+            <version>2.0-4eae63c898-1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -201,7 +192,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0-SNAPSHOT</version>
+                <version>3.3.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -214,9 +205,17 @@
                                     <pattern>it.unimi</pattern>
                                     <shadedPattern>net.countercraft.movecraft.libs.it.unimi</shadedPattern>
                                 </relocation>
-                                <relocation>
+                                <!--<relocation>
                                     <pattern>net.kyori</pattern>
                                     <shadedPattern>net.countercraft.movecraft.libs.net.kyori</shadedPattern>
+                                </relocation> -->
+                                <relocation>
+                                    <pattern>com.github.retrooper</pattern>
+                                    <shadedPattern>net.countercraft.movecraft.libs.com.github.retrooper</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.github.retrooper</pattern>
+                                    <shadedPattern>net.countercraft.movecraft.libs.io.github.retrooper</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
@@ -264,45 +263,14 @@
                                     <include>net.countercraft:movecraft*</include>
                                     <include>org.roaringbitmap:*</include>
                                     <include>it.unimi.dsi:fastutil*</include>
+                                    <!--
                                     <include>net.kyori:adventure*</include>
-                                    <include>net.kyori:examination*</include>
+                                    <include>net.kyori:examination*</include> -->
                                     <include>com.github.retrooper:packetevents*</include>
+                                    <include>com.github.retrooper.packetevents:*</include>
                                     <include>org.apache.commons:commons-math3*</include>
                                 </includes>
                             </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.md-5</groupId>
-                <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.2</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <id>remap-obf</id>
-                        <configuration>
-                            <srgIn>org.spigotmc:minecraft-server:1.17-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>
-                            <reverse>true</reverse>
-                            <remappedDependencies>org.spigotmc:spigot:1.17-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>
-                            <remappedArtifactAttached>true</remappedArtifactAttached>
-                            <remappedClassifierName>remapped-obf</remappedClassifierName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>remap</goal>
-                        </goals>
-                        <id>remap-spigot</id>
-                        <configuration>
-                            <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>
-                            <srgIn>org.spigotmc:minecraft-server:1.17-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>
-                            <remappedDependencies>org.spigotmc:spigot:1.17-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>
                         </configuration>
                     </execution>
                 </executions>

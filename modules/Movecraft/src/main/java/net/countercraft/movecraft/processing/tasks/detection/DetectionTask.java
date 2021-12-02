@@ -186,10 +186,10 @@ public class DetectionTask implements Supplier<Effect> {
         if(!result.isSucess()){
             // TODO: check subcraft rotate still works
             Result finalResult = result;
-            if (player != null) {
-                player.sendMessage(finalResult.getMessage());
+            if (player == null) {
+                return null;
             }
-            return;
+            return () -> player.sendMessage(finalResult.getMessage());
         }
         craft.setHitBox(new BitmapHitBox(legal));
         craft.setFluidLocations(new BitmapHitBox(fluid));
