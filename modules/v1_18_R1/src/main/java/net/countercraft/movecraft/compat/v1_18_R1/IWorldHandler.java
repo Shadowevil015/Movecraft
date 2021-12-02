@@ -177,7 +177,6 @@ public class IWorldHandler extends WorldHandler {
         }
         //create the new block
         for(int i = 0, positionSize = newPositions.size(); i<positionSize; i++) {
-            Bukkit.broadcastMessage("supposed to set block " + blockData.get(i).getBlock() + " at " + newPositions.get(i).toShortString());
             setBlockFast(nativeWorld, newPositions.get(i), blockData.get(i));
         }
         //*******************************************
