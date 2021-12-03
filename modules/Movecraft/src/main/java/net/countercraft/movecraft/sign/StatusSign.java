@@ -72,7 +72,7 @@ public final class StatusSign implements Listener{
             foundBlocks.add(material);
 
             if(Tags.FURNACES.contains(material)) {
-                InventoryHolder inventoryHolder = (InventoryHolder) craft.getWorld().getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getState();
+                InventoryHolder inventoryHolder = (InventoryHolder) craft.getWorld().getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getState(false);
                 for (ItemStack iStack : inventoryHolder.getInventory()) {
                     if (iStack == null || !fuelTypes.containsKey(iStack.getType()))
                         continue;
