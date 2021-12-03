@@ -29,11 +29,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class IWorldHandler extends WorldHandler {
@@ -97,10 +93,18 @@ public class IWorldHandler extends WorldHandler {
         }
         //create the new block and process redstone
         ArrayList<BlockPos> newPositions = new ArrayList<>();
+        HashMap<BlockPos, BlockState> fireBlocks = new HashMap<>();
         for(Map.Entry<BlockPos,BlockState> entry : blockData.entrySet()) {
-            BlockPos rotatedPos = rotatedPositions.get(entry.getKey());
-            setBlockFast(nativeWorld, rotatedPos, entry.getValue());
+            BlockPos pos = entry.getKey();
+            BlockState state = entry.getValue();
+
+            BlockPos rotatedPos = rotatedPositions.get(pos);
+            setBlockFast(nativeWorld, rotatedPos, state);
             newPositions.add(rotatedPos);
+
+            if (state.getBlock() instanceof FireBlock) {
+                fireBlocks.put(pos, state);
+            }
         }
 
         //*******************************************
@@ -128,6 +132,11 @@ public class IWorldHandler extends WorldHandler {
         //*      Step six: Process redstone         *
         //*******************************************
         processRedstone(newPositions, nativeWorld);
+
+        //*******************************************
+        //*        Step seven: Process fire         *
+        //*******************************************
+        processFireSpread(fireBlocks, nativeWorld);
     }
 
     @Override
@@ -176,8 +185,15 @@ public class IWorldHandler extends WorldHandler {
             newPositions.add(position.offset(translateVector));
         }
         //create the new block
+        HashMap<BlockPos, BlockState> fireBlocks = new HashMap<>();
         for(int i = 0, positionSize = newPositions.size(); i<positionSize; i++) {
-            setBlockFast(nativeWorld, newPositions.get(i), blockData.get(i));
+            BlockState state = blockData.get(i);
+            BlockPos pos = newPositions.get(i);
+            // Add to fire processing list
+            if (state.getBlock() instanceof FireBlock) {
+                fireBlocks.put(pos, state);
+            }
+            setBlockFast(nativeWorld, pos, state);
         }
         //*******************************************
         //*    Step four: replace all the tiles     *
@@ -198,10 +214,16 @@ public class IWorldHandler extends WorldHandler {
         for (BlockPos position : deletePositions) {
             setBlockFast(oldNativeWorld, position, Blocks.AIR.defaultBlockState());
         }
+
         //*******************************************
         //*      Step six: Process redstone         *
         //*******************************************
         processRedstone(newPositions, nativeWorld);
+
+        //*******************************************
+        //*        Step seven: Process fire         *
+        //*******************************************
+        processFireSpread(fireBlocks, nativeWorld);
     }
 
     @Nullable
@@ -252,6 +274,15 @@ public class IWorldHandler extends WorldHandler {
             }
             chunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
             world.updateNeighborsAt(position, data.getBlock());
+        }
+    }
+
+    private void processFireSpread(HashMap<BlockPos, BlockState> fireStates, ServerLevel world) {
+        for (var entry: fireStates.entrySet()) {
+            BlockState state = entry.getValue();
+            if (state.getBlock() instanceof FireBlock fireBlock) {
+                fireBlock.tick(state, world, entry.getKey(), world.random);
+            }
         }
     }
 
