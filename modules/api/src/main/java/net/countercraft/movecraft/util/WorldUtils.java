@@ -21,7 +21,7 @@ public class WorldUtils {
             return 0;
 
         try {
-            return (int) World.class.getMethod("getMinHeight").invoke(w);
+            return w.getMinHeight();
         }
         catch (Exception e) {
             e.printStackTrace();
