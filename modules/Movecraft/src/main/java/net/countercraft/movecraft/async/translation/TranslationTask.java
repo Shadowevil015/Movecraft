@@ -449,6 +449,9 @@ public class TranslationTask extends AsyncTask {
         var object = craft.getType().getObjectProperty(CraftType.COLLISION_SOUND);
         if(!(object instanceof net.kyori.adventure.sound.Sound))
             throw new IllegalStateException("COLLISION_SOUND must be of type Sound");
+        if (craft.getSinking()) {
+            return;
+        }
         craft.getAudience().playSound((net.kyori.adventure.sound.Sound) object);
     }
 
