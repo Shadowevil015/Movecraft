@@ -112,9 +112,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.retrooper</groupId>
-            <artifactId>packetevents</artifactId>
-            <version>2.0-4eae63c898-1</version>
+            <groupId>com.github.retrooper.packetevents</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>2.0-16d57cead7-1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -211,11 +211,11 @@
                                 </relocation> -->
                                 <relocation>
                                     <pattern>com.github.retrooper</pattern>
-                                    <shadedPattern>net.countercraft.movecraft.libs.com.github.retrooper</shadedPattern>
+                                    <shadedPattern>com.github.retrooper.movecraft</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.github.retrooper</pattern>
-                                    <shadedPattern>net.countercraft.movecraft.libs.io.github.retrooper</shadedPattern>
+                                    <shadedPattern>io.github.retrooper.movecraft</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
