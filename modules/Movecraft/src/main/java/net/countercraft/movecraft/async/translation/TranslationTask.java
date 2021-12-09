@@ -481,7 +481,7 @@ public class TranslationTask extends AsyncTask {
         for (MovecraftLocation loc : oldHitBox) {
             Block block = craft.getWorld().getBlockAt(loc.getX(), loc.getY(), loc.getZ());
             if (Tags.CHESTS.contains(block.getType()))
-                chests.add(((InventoryHolder) (block.getState())).getInventory());
+                chests.add(((InventoryHolder) (block.getState(false))).getInventory());
         }
 
         ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);

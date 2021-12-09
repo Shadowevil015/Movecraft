@@ -7,6 +7,7 @@ import net.countercraft.movecraft.events.CraftScuttleEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,10 @@ public class ScuttleSign implements Listener {
         if(event.getClickedBlock() == null){
             return;
         }
-        BlockState state = event.getClickedBlock().getState();
+        if (!Tag.SIGNS.isTagged(event.getClickedBlock().getType())) {
+            return;
+        }
+        BlockState state = event.getClickedBlock().getState(false);
         if (!(state instanceof Sign)) {
             return;
         }
