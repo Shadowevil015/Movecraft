@@ -92,7 +92,7 @@ public abstract class AsyncTask extends BukkitRunnable {
         for (MovecraftLocation bTest : craft.getHitBox()) {
             Block b = craft.getWorld().getBlockAt(bTest.getX(), bTest.getY(), bTest.getZ());
             if (Tags.FURNACES.contains(b.getType())) {
-                InventoryHolder inventoryHolder = (InventoryHolder) b.getState();
+                InventoryHolder inventoryHolder = (InventoryHolder) b.getState(false);
                 for (ItemStack stack : inventoryHolder.getInventory()) {
                     if (stack == null || !fuelTypes.containsKey(stack.getType()))
                         continue;
