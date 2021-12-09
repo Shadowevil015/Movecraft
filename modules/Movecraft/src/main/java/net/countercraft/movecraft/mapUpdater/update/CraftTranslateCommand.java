@@ -90,7 +90,9 @@ public class CraftTranslateCommand extends UpdateCommand {
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
-            final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craft.getHitBox().asSet());
+            //final var invertedHitBox = Sets.difference(craft.getHitBox().boundingHitBox().asSet(), craft.getHitBox().asSet());
+            final LinkedHashSet<MovecraftLocation> invertedHitBox = new LinkedHashSet<>(craft.getHitBox().boundingHitBox().asSet());
+            invertedHitBox.removeAll(craft.getHitBox().asSet());
 
             //place phased blocks
             final Set<Location> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
@@ -113,10 +115,12 @@ public class CraftTranslateCommand extends UpdateCommand {
             }
 
             //Check to see which locations in the from set are actually outside of the craft
-            final Set<MovecraftLocation> confirmed = craft.getSinking() ? invertedHitBox.copyInto(new LinkedHashSet<>()) : verifyExterior(invertedHitBox, validExterior);
+            final Set<MovecraftLocation> confirmed = craft.getSinking() ? invertedHitBox : verifyExterior(invertedHitBox, validExterior);
 
             //A set of locations that are confirmed to be "exterior" locations
-            final Set<MovecraftLocation> failed = Sets.difference(invertedHitBox, confirmed).copyInto(new LinkedHashSet<>());
+            var failed = invertedHitBox;
+            failed.removeAll(confirmed);
+            //final Set<MovecraftLocation> failed = Sets.difference(invertedHitBox, confirmed).copyInto(new LinkedHashSet<>());
 
             final WorldHandler handler = Movecraft.getInstance().getWorldHandler();
             for (MovecraftLocation location : failed) {
