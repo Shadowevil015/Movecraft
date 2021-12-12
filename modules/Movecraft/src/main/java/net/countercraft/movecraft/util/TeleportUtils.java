@@ -6,12 +6,14 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.Random;
+
 public class TeleportUtils {
-    public static void teleport(Player player, Location loc, float yawChange, float pitchChange) {
-        WrapperPlayServerPlayerPositionAndLook positionPacket = new WrapperPlayServerPlayerPositionAndLook(loc.getX(), loc.getY(), loc.getZ(), yawChange, pitchChange, 0, (int) loc.toBlockKey());
-        positionPacket.setRelative(RelativeFlags.X, false);
-        positionPacket.setRelative(RelativeFlags.Y, false);
-        positionPacket.setRelative(RelativeFlags.Z, false);
+    public static void teleport(Player player, double xChange, double yChange, double zChange, float yawChange, float pitchChange) {
+        WrapperPlayServerPlayerPositionAndLook positionPacket = new WrapperPlayServerPlayerPositionAndLook(xChange, yChange, zChange, yawChange, pitchChange, 0, new Random().nextInt());
+        positionPacket.setRelative(RelativeFlags.X, true);
+        positionPacket.setRelative(RelativeFlags.Y, true);
+        positionPacket.setRelative(RelativeFlags.Z, true);
         positionPacket.setRelative(RelativeFlags.YAW, true);
         positionPacket.setRelative(RelativeFlags.PITCH, true);
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, positionPacket);
