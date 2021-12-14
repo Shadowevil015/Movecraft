@@ -85,4 +85,12 @@ public class RequiredBlockEntry {
 
         return new Pair<>(DetectionResult.SUCCESS, "");
     }
+
+    public Pair<Boolean, Double> getMin() {
+        return new Pair<>(this.numericMin, min);
+    }
+
+    public Pair<Boolean, Double> getMax() {
+        return new Pair<>(this.numericMax, max);
+    }
 }
