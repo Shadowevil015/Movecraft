@@ -68,7 +68,7 @@ public class AsyncManager extends BukkitRunnable {
     private final HashSet<Craft> clearanceSet = new HashSet<>();
     private final HashMap<HitBox, Long> wrecks = new HashMap<>();
     private final HashMap<HitBox, World> wreckWorlds = new HashMap<>();
-    private final HashMap<HitBox, Map<Location, BlockData>> wreckPhases = new HashMap<>();
+    private final HashMap<HitBox, Map<MovecraftLocation, BlockData>> wreckPhases = new HashMap<>();
     private final WeakHashMap<World, Set<MovecraftLocation>> processedFadeLocs = new WeakHashMap<>();
     private final Map<Craft, Integer> cooldownCache = new WeakHashMap<>();
 
@@ -404,7 +404,7 @@ public class AsyncManager extends BukkitRunnable {
                 continue;
             }
             final HitBox hitBox = entry.getKey();
-            final Map<Location, BlockData> phaseBlocks = wreckPhases.get(hitBox);
+            final Map<MovecraftLocation, BlockData> phaseBlocks = wreckPhases.get(hitBox);
             final World world = wreckWorlds.get(hitBox);
             ArrayList<UpdateCommand> commands = new ArrayList<>();
             int fadedBlocks = 0;

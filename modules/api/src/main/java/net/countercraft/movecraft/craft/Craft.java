@@ -237,7 +237,7 @@ public interface Craft {
     int getWaterLine();
 
     @NotNull
-    Map<Location, BlockData> getPhaseBlocks();
+    Map<MovecraftLocation, BlockData> getPhaseBlocks();
 
     @NotNull
     String getName();

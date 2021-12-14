@@ -86,7 +86,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             for (MovecraftLocation location : to) {
                 var data = location.toBukkit(world).getBlock().getBlockData();
                 if (passthroughBlocks.contains(data.getMaterial())) {
-                    craft.getPhaseBlocks().put(location.toBukkit(world), data);
+                    craft.getPhaseBlocks().put(location, data);
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
@@ -95,12 +95,12 @@ public class CraftTranslateCommand extends UpdateCommand {
             invertedHitBox.removeAll(craft.getHitBox().asSet());
 
             //place phased blocks
-            final Set<Location> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
-            overlap.removeIf((location -> !craft.getHitBox().contains(MathUtils.bukkit2MovecraftLoc(location))));
+            final Set<MovecraftLocation> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
+            overlap.retainAll(craft.getHitBox().asSet());
             final int minX = craft.getHitBox().getMinX();
             final int maxX = craft.getHitBox().getMaxX();
             final int minY = craft.getHitBox().getMinY();
-            final int maxY = overlap.isEmpty() ? craft.getHitBox().getMaxY() : Collections.max(overlap, Comparator.comparingInt(Location::getBlockY)).getBlockY();
+            final int maxY = overlap.isEmpty() ? craft.getHitBox().getMaxY() : Collections.max(overlap, Comparator.comparingInt(MovecraftLocation::getY)).getY();
             final int minZ = craft.getHitBox().getMinZ();
             final int maxZ = craft.getHitBox().getMaxZ();
             final HitBox[] surfaces = {
@@ -129,7 +129,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 if (!passthroughBlocks.contains(block.getType())) {
                     continue;
                 }
-                craft.getPhaseBlocks().put(bukkit, block.getBlockData());
+                craft.getPhaseBlocks().put(location, block.getBlockData());
             }
             //translate the craft
             handler.translateCraft(craft, displacement,world);
@@ -150,22 +150,22 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             //place confirmed blocks if they have been un-phased
             for (MovecraftLocation location : confirmed) {
-                Location bukkit = location.toBukkit(craft.getWorld());
-                if (!craft.getPhaseBlocks().containsKey(bukkit)) {
+                if (!craft.getPhaseBlocks().containsKey(location)) {
                     continue;
                 }
                 //Do not place if it is at a collapsed HitBox location
                 if (!craft.getCollapsedHitBox().isEmpty() && craft.getCollapsedHitBox().contains(location))
                     continue;
-                var phaseBlock = craft.getPhaseBlocks().remove(bukkit);
+                var phaseBlock = craft.getPhaseBlocks().remove(location);
+                Location bukkit = location.toBukkit(world);
                 handler.setBlockFast(bukkit, phaseBlock);
-                craft.getPhaseBlocks().remove(bukkit);
+                craft.getPhaseBlocks().remove(location);
             }
 
-            for(MovecraftLocation location : originalLocations){
-                Location bukkit = location.toBukkit(oldWorld);
-                if(craft.getPhaseBlocks().containsKey(bukkit) && !craft.getHitBox().contains(location)){
-                    var phaseBlock = craft.getPhaseBlocks().remove(bukkit);
+            for (MovecraftLocation location : originalLocations){
+                if (craft.getPhaseBlocks().containsKey(location) && !craft.getHitBox().contains(location)) {
+                    Location bukkit = location.toBukkit(oldWorld);
+                    var phaseBlock = craft.getPhaseBlocks().remove(location);
                     handler.setBlockFast(bukkit, phaseBlock);
                 }
             }
@@ -175,7 +175,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 Location bukkit = location.toBukkit(oldWorld);
                 var block = bukkit.getBlock();
                 if (passthroughBlocks.contains(block.getType())) {
-                    craft.getPhaseBlocks().put(bukkit, block.getBlockData());
+                    craft.getPhaseBlocks().put(location, block.getBlockData());
                     handler.setBlockFast(bukkit, airBlockData);
 
                 }

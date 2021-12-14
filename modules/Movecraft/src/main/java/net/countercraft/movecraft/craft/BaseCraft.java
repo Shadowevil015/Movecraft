@@ -66,7 +66,7 @@ public abstract class BaseCraft implements Craft {
     private int origBlockCount;
     @Nullable private Player notificationPlayer;
     @NotNull private Audience audience;
-    @NotNull private final Map<Location, BlockData> phaseBlocks = new HashMap<>();
+    @NotNull private final Map<MovecraftLocation, BlockData> phaseBlocks = new HashMap<>();
     @NotNull private String name = "";
     @NotNull TimingData stats = new TimingData();
     @NotNull private MovecraftLocation lastTranslation = new MovecraftLocation(0,0,0);
@@ -532,7 +532,7 @@ public abstract class BaseCraft implements Craft {
     }
 
     @Override
-    public @NotNull Map<Location, BlockData> getPhaseBlocks(){
+    public @NotNull Map<MovecraftLocation, BlockData> getPhaseBlocks(){
         return phaseBlocks;
     }
 

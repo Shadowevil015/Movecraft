@@ -130,12 +130,12 @@ public class DetectionTask implements Supplier<Effect> {
         final SetHitBox entireHitbox = new SetHitBox(craft.getHitBox());
 
         //place phased blocks
-        final Set<Location> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
-        overlap.retainAll(craft.getHitBox().asSet().stream().map(l -> l.toBukkit(badWorld)).collect(Collectors.toSet()));
+        final Set<MovecraftLocation> overlap = new HashSet<>(craft.getPhaseBlocks().keySet());
+        overlap.retainAll(craft.getHitBox().asSet());
         final int minX = craft.getHitBox().getMinX();
         final int maxX = craft.getHitBox().getMaxX();
         final int minY = craft.getHitBox().getMinY();
-        final int maxY = overlap.isEmpty() ? craft.getHitBox().getMaxY() : Collections.max(overlap, Comparator.comparingInt(Location::getBlockY)).getBlockY();
+        final int maxY = overlap.isEmpty() ? craft.getHitBox().getMaxY() : Collections.max(overlap, Comparator.comparingInt(MovecraftLocation::getY)).getY();
         final int minZ = craft.getHitBox().getMinZ();
         final int maxZ = craft.getHitBox().getMaxZ();
         final HitBox[] surfaces = {
@@ -170,7 +170,7 @@ public class DetectionTask implements Supplier<Effect> {
         return () -> {
             for (MovecraftLocation location : entireHitbox) {
                 if (location.getY() <= waterLine) {
-                    craft.getPhaseBlocks().put(location.toBukkit(badWorld), waterData);
+                    craft.getPhaseBlocks().put(location, waterData);
                 }
             }
         };
