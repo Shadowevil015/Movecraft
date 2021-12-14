@@ -92,7 +92,6 @@ public class IWorldHandler extends WorldHandler {
             blockData.put(position,nativeWorld.getBlockState(position).rotate(ROTATION[rotation.ordinal()]));
         }
         //create the new block and process redstone
-        ArrayList<BlockPos> newPositions = new ArrayList<>();
         HashMap<BlockPos, BlockState> fireBlocks = new HashMap<>();
         for(Map.Entry<BlockPos,BlockState> entry : blockData.entrySet()) {
             BlockPos pos = entry.getKey();
@@ -100,7 +99,6 @@ public class IWorldHandler extends WorldHandler {
 
             BlockPos rotatedPos = rotatedPositions.get(pos);
             setBlockFast(nativeWorld, rotatedPos, state);
-            newPositions.add(rotatedPos);
 
             if (state.getBlock() instanceof FireBlock) {
                 fireBlocks.put(pos, state);
@@ -131,7 +129,7 @@ public class IWorldHandler extends WorldHandler {
         //*******************************************
         //*      Step six: Process redstone         *
         //*******************************************
-        processRedstone(newPositions, nativeWorld);
+        processRedstone(rotatedPositions.values(), nativeWorld);
 
         //*******************************************
         //*        Step seven: Process fire         *
@@ -255,25 +253,13 @@ public class IWorldHandler extends WorldHandler {
         chunk.setUnsaved(true);
     }
 
-    private void processRedstone(List<BlockPos> redstone, Level world) {
-        Map<BlockPos, BlockState> redstoneComponents = new HashMap<>();
+    private void processRedstone(Collection<BlockPos> redstone, Level world) {
         for (BlockPos pos : redstone) {
             BlockState data = world.getBlockState(pos);
-            if (isRedstoneComponent(data.getBlock()))
-                redstoneComponents.put(pos, data);
-        }
-        for (Map.Entry<BlockPos, BlockState> entry : redstoneComponents.entrySet()) {
-            final BlockPos position = entry.getKey();
-            final BlockState data = entry.getValue();
-            LevelChunk chunk = world.getChunkAt(position);
-            LevelChunkSection chunkSection = chunk.getSections()[(position.getY() >> 4) - chunk.getMinSection()];
-            if (chunkSection == null) {
-                // Put a GLASS block to initialize the section. It will be replaced next with the real block.
-                chunk.setBlockState(position, Blocks.GLASS.defaultBlockState(), false);
-                chunkSection = chunk.getSections()[(position.getY() >> 4) - chunk.getMinSection()];
+            if (isRedstoneComponent(data.getBlock())) {
+                world.sendBlockUpdated(pos, data, data, 3);
+                world.updateNeighborsAt(pos, data.getBlock());
             }
-            chunkSection.setBlockState(position.getX()&15, position.getY()&15, position.getZ()&15, data);
-            world.updateNeighborsAt(position, data.getBlock());
         }
     }
 
@@ -289,6 +275,25 @@ public class IWorldHandler extends WorldHandler {
     @Override
     public void setBlockFast(@NotNull Location location, @NotNull BlockData data){
         setBlockFast(location, MovecraftRotation.NONE, data);
+    }
+
+    @Override
+    public void setBlockFast(@NotNull World world, @NotNull MovecraftLocation location, @NotNull BlockData data){
+        setBlockFast(world, location, MovecraftRotation.NONE, data);
+    }
+
+    @Override
+    public void setBlockFast(@NotNull World world, @NotNull MovecraftLocation location, @NotNull MovecraftRotation rotation, @NotNull BlockData data) {
+        BlockState blockData;
+        if(data instanceof CraftBlockData){
+            blockData = ((CraftBlockData) data).getState();
+        } else {
+            blockData = (BlockState) data;
+        }
+        blockData = blockData.rotate(ROTATION[rotation.ordinal()]);
+        Level nmsWorld = ((CraftWorld)(world)).getHandle();
+        BlockPos BlockPos = locationToPosition(location);
+        setBlockFast(nmsWorld, BlockPos, blockData);
     }
 
     @Override

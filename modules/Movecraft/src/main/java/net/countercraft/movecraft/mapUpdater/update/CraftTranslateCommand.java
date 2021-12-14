@@ -157,16 +157,14 @@ public class CraftTranslateCommand extends UpdateCommand {
                 if (!craft.getCollapsedHitBox().isEmpty() && craft.getCollapsedHitBox().contains(location))
                     continue;
                 var phaseBlock = craft.getPhaseBlocks().remove(location);
-                Location bukkit = location.toBukkit(world);
-                handler.setBlockFast(bukkit, phaseBlock);
+                handler.setBlockFast(world, location, phaseBlock);
                 craft.getPhaseBlocks().remove(location);
             }
 
             for (MovecraftLocation location : originalLocations){
                 if (craft.getPhaseBlocks().containsKey(location) && !craft.getHitBox().contains(location)) {
-                    Location bukkit = location.toBukkit(oldWorld);
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
-                    handler.setBlockFast(bukkit, phaseBlock);
+                    handler.setBlockFast(world, location, phaseBlock);
                 }
             }
 
@@ -176,7 +174,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 var block = bukkit.getBlock();
                 if (passthroughBlocks.contains(block.getType())) {
                     craft.getPhaseBlocks().put(location, block.getBlockData());
-                    handler.setBlockFast(bukkit, airBlockData);
+                    handler.setBlockFast(world, location, airBlockData);
 
                 }
             }
