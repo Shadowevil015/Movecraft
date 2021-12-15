@@ -67,11 +67,13 @@ final public class MovecraftLocation implements Comparable<MovecraftLocation>{
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof MovecraftLocation) {
-            MovecraftLocation location = (MovecraftLocation) o;
-            return location.x==this.x && location.y==this.y && location.z == this.z;
-        }
-        return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MovecraftLocation location = (MovecraftLocation) o;
+        if (x != location.x) return false;
+        if (y != location.y) return false;
+        return z == location.z;
     }
 
     @Override
