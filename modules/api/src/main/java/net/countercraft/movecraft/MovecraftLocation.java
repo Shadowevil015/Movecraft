@@ -76,7 +76,11 @@ final public class MovecraftLocation implements Comparable<MovecraftLocation>{
 
     @Override
     public int hashCode() {
-        return 131 * 131 * x + 131 * z + y;
+        int hash = 17;
+        hash = hash * 31 + x;
+        hash = hash * 31 + y;
+        hash = hash * 31 + z;
+        return hash;
     }
 
     public MovecraftLocation add(MovecraftLocation l) {
