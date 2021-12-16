@@ -27,11 +27,6 @@
             <version>${revision}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
