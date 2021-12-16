@@ -2,6 +2,7 @@ package net.countercraft.movecraft.events;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,39 +12,36 @@ import java.util.List;
 public class SignTranslateEvent extends CraftEvent{
     private static final HandlerList HANDLERS = new HandlerList();
     @NotNull private final List<MovecraftLocation> locations;
-    @NotNull private final String[] lines;
+    @NotNull private final List<Component> lines;
     private boolean updated = false;
 
-    public SignTranslateEvent(@NotNull Craft craft, @NotNull String[] lines, @NotNull List<MovecraftLocation> locations) throws IndexOutOfBoundsException{
+    public SignTranslateEvent(@NotNull Craft craft, @NotNull List<Component> lines, @NotNull List<MovecraftLocation> locations) throws IndexOutOfBoundsException{
         super(craft);
         this.locations = locations;
-        if(lines.length!=4)
-            throw new IndexOutOfBoundsException();
         this.lines=lines;
     }
 
     @NotNull
-    @Deprecated
-    public String[] getLines() {
+    public List<Component> getLines() {
         this.updated = true;
         return lines;
     }
 
-    public String getLine(int index) throws IndexOutOfBoundsException{
+    public Component getLine(int index) throws IndexOutOfBoundsException{
         if(index > 3 || index < 0)
             throw new IndexOutOfBoundsException();
-        return lines[index];
+        return lines.get(index);
     }
 
-    public void setLine(int index, String line){
+    public void setLine(int index, Component line){
         if(index > 3 || index < 0)
             throw new IndexOutOfBoundsException();
         this.updated = true;
-        lines[index]=line;
+        lines.set(index, line);
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

@@ -5,6 +5,9 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.events.SignTranslateEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Tag;
 import org.bukkit.World;
@@ -13,6 +16,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 public class ContactsSign implements Listener{
 
@@ -27,10 +32,10 @@ public class ContactsSign implements Listener{
             BlockState state = block.getState(false);
             if(state instanceof Sign){
                 Sign sign = (Sign) state;
-                if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Contacts:")) {
-                    sign.setLine(1, "");
-                    sign.setLine(2, "");
-                    sign.setLine(3, "");
+                if (PlainTextComponentSerializer.plainText().serialize(sign.lines().get(0)).contains("Contacts: ")) {
+                    sign.line(1, Component.empty());
+                    sign.line(2, Component.empty());
+                    sign.line(3, Component.empty());
                     sign.update();
                 }
             }
@@ -39,9 +44,9 @@ public class ContactsSign implements Listener{
 
     @EventHandler
     public final void onSignTranslateEvent(SignTranslateEvent event){
-        String[] lines = event.getLines();
+        List<Component> lines = event.getLines();
         Craft craft = event.getCraft();
-        if (!ChatColor.stripColor(lines[0]).equalsIgnoreCase("Contacts:")) {
+        if (!PlainTextComponentSerializer.plainText().serialize(lines.get(0)).contains("Contacts:")) {
             return;
         }
         int signLine=1;
@@ -50,7 +55,7 @@ public class ContactsSign implements Listener{
             MovecraftLocation tcenter = tcraft.getHitBox().getMidPoint();
             int distsquared= center.distanceSquared(tcenter);
             // craft has been detected
-            String notification = ChatColor.BLUE + tcraft.getType().getStringProperty(CraftType.NAME);
+            String notification = tcraft.getType().getStringProperty(CraftType.NAME);
             if(notification.length()>9) {
                 notification = notification.substring(0, 7);
             }
@@ -70,7 +75,7 @@ public class ContactsSign implements Listener{
                     notification+=" N";
                 }
             }
-            lines[signLine++] = notification;
+            lines.set(signLine++, Component.text(notification, NamedTextColor.BLUE));
             if (signLine >= 4) {
                 break;
             }
@@ -78,7 +83,7 @@ public class ContactsSign implements Listener{
         }
         if(signLine<4) {
             for(int i=signLine; i<4; i++) {
-                lines[signLine]="";
+                lines.set(signLine, Component.empty());
             }
         }
     }

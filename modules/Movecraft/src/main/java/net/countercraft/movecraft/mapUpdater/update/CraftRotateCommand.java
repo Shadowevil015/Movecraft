@@ -19,6 +19,7 @@ import net.countercraft.movecraft.util.Tags;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.util.hitboxes.SolidHitBox;
 import net.countercraft.movecraft.util.hitboxes.SetHitBox;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -196,50 +197,40 @@ public class CraftRotateCommand extends UpdateCommand {
             logger.info("Total time: " + (time / 1e6) + " milliseconds. Moving with cooldown of " + craft.getTickCooldown() + ". Speed of: " + String.format("%.2f", craft.getSpeed()));
     }
 
-    private void sendSignEvents(){
-        Object2ObjectMap<String[], List<MovecraftLocation>> signs = new Object2ObjectOpenCustomHashMap<>(new Hash.Strategy<String[]>() {
-            @Override
-            public int hashCode(String[] strings) {
-                return Arrays.hashCode(strings);
-            }
-
-            @Override
-            public boolean equals(String[] a, String[] b) {
-                return Arrays.equals(a, b);
-            }
-        });
+    private void sendSignEvents() {
+        HashMap<List<Component>, List<MovecraftLocation>> signs = new HashMap<>();
         Map<MovecraftLocation, Sign> signStates = new HashMap<>();
-
         for (MovecraftLocation location : craft.getHitBox()) {
             Block block = location.toBukkit(craft.getWorld()).getBlock();
+            if (!Tag.SIGNS.isTagged(block.getType())) {
+                continue;
+            }
             BlockState state = block.getState(false);
             if (state instanceof Sign) {
                 Sign sign = (Sign) state;
-                if(!signs.containsKey(sign.getLines()))
-                    signs.put(sign.getLines(), new ArrayList<>());
-                signs.get(sign.getLines()).add(location);
+                List<Component> lines = new ArrayList<>(sign.lines());
+                if (!signs.containsKey(lines))
+                    signs.put(lines, new ArrayList<>());
+                signs.get(lines).add(location);
                 signStates.put(location, sign);
             }
         }
-        for(Map.Entry<String[], List<MovecraftLocation>> entry : signs.entrySet()){
+        for (var entry : signs.entrySet()) {
             SignTranslateEvent event = new SignTranslateEvent(craft, entry.getKey(), entry.getValue());
             Bukkit.getServer().getPluginManager().callEvent(event);
-            if(!event.isUpdated()){
+            if (!event.isUpdated()) {
                 continue;
             }
-            for(MovecraftLocation location : entry.getValue()){
+            for (MovecraftLocation location : entry.getValue()) {
                 Block block = location.toBukkit(craft.getWorld()).getBlock();
                 BlockState state = block.getState(false);
-                BlockData data = block.getBlockData();
                 if (!(state instanceof Sign)) {
                     continue;
                 }
                 Sign sign = signStates.get(location);
-                for(int i = 0; i<4; i++){
-                    sign.setLine(i, entry.getKey()[i]);
+                for (int i = 0; i < 4; i++) {
+                    sign.line(i, entry.getKey().get(i));
                 }
-                sign.update(false, false);
-                block.setBlockData(data);
             }
         }
     }

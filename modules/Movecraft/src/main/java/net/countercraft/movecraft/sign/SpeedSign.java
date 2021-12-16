@@ -4,6 +4,8 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.events.CraftDetectEvent;
 import net.countercraft.movecraft.events.SignTranslateEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Tag;
 import org.bukkit.World;
@@ -25,10 +27,10 @@ public final class SpeedSign implements Listener{
             BlockState state = block.getState(false);
             if(state instanceof Sign){
                 Sign sign = (Sign) state;
-                if (ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Speed:")) {
-                    sign.setLine(1, "0 m/s");
-                    sign.setLine(2, "0ms");
-                    sign.setLine(3, "0T");
+                if (PlainTextComponentSerializer.plainText().serialize(sign.lines().get(0)).contains("Speed:")) {
+                    sign.line(1, Component.text("0 m/s"));
+                    sign.line(2, Component.text( "0ms"));
+                    sign.line(3, Component.text( "0T"));
                     sign.update();
                 }
             }
@@ -36,13 +38,13 @@ public final class SpeedSign implements Listener{
     }
 
     @EventHandler
-    public final void onSignTranslate(SignTranslateEvent event) {
+    public void onSignTranslate(SignTranslateEvent event) {
         Craft craft = event.getCraft();
-        if (!ChatColor.stripColor(event.getLine(0)).equalsIgnoreCase("Speed:")) {
+        if (!PlainTextComponentSerializer.plainText().serialize(event.getLines().get(0)).contains("Speed:")) {
             return;
         }
-        event.setLine(1,String.format("%.2f",craft.getSpeed()) + "m/s");
-        event.setLine(2,String.format("%.2f",craft.getMeanCruiseTime() * 1000) + "ms");
-        event.setLine(3,craft.getTickCooldown() + "T");
+        event.setLine(0, Component.text(String.format("%.2f",craft.getSpeed()) + "m/s"));
+        event.setLine(1, Component.text(String.format("%.2f",craft.getMeanCruiseTime() * 1000) + "ms"));
+        event.setLine(2, Component.text(craft.getTickCooldown() + "T"));
     }
 }
