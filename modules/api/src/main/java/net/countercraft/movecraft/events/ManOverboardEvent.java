@@ -2,6 +2,7 @@ package net.countercraft.movecraft.events;
 
 import net.countercraft.movecraft.craft.Craft;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -9,11 +10,13 @@ import org.jetbrains.annotations.NotNull;
 public class ManOverboardEvent extends CraftEvent implements Cancellable {
     @NotNull private static final HandlerList HANDLERS = new HandlerList();
     @NotNull private Location location;
+    @NotNull private Player player;
     private boolean cancelled = false;
     private String failMessage = "";
 
-    public ManOverboardEvent(@NotNull Craft c, @NotNull Location location) {
+    public ManOverboardEvent(@NotNull Player player, @NotNull Craft c, @NotNull Location location) {
         super(c);
+        this.player = player;
         this.location = location;
     }
 
@@ -34,6 +37,11 @@ public class ManOverboardEvent extends CraftEvent implements Cancellable {
     @NotNull
     public Location getLocation() {
         return location;
+    }
+
+    @NotNull
+    public Player getPlayer() {
+        return player;
     }
 
     @Override

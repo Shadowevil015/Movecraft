@@ -58,7 +58,7 @@ public class ManOverboardCommand implements CommandExecutor{
             return true;
         }
 
-        ManOverboardEvent event = new ManOverboardEvent(craft, telPoint);
+        ManOverboardEvent event = new ManOverboardEvent(player, craft, telPoint);
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             player.sendMessage(Component.text(event.getFailMessage()));
