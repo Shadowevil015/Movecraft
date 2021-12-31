@@ -109,14 +109,6 @@ public class Movecraft extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Read in config
-        try {
-            Class.forName("com.destroystokyo.paper.Title");
-            Settings.IsPaper = true;
-        }catch (Exception e){
-            Settings.IsPaper = false;
-        }
-
         PacketEvents.getAPI().init();
 
         Settings.LOCALE = getConfig().getString("Locale");

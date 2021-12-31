@@ -196,14 +196,6 @@ public class DetectionTask implements Supplier<Effect> {
 
         if(craft instanceof SubCraft)
             ((SubCraft) craft).setParent(parent);
-
-        // Subtract the subcraft from the hitbox of the parent.
-        // TODO (Zaify): Find a proper fix for this issue - torpedoes/bombs cannot be launched from the same place multiple times due to the code below
-        if (!(craft instanceof CruiseOnPilotCraft)) {
-            var parentHitBox = parent.getHitBox();
-            parentHitBox = parentHitBox.difference(craft.getHitBox());
-            parent.setHitBox(parentHitBox);
-        }
     }
 
     @Override
