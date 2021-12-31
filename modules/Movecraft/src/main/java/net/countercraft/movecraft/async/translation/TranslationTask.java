@@ -204,7 +204,7 @@ public class TranslationTask extends AsyncTask {
             fail(I18nSupport.getInternationalisedString("Translation - Failed Craft hit height limit"));
             return;
         } else if (dy>0 && maxY + dy > maxHeightLimit) { //If explosive and too high, set dy to 0
-            dy = -1;
+            dy = 0;
         } else if (minY + dy < minHeightLimit && dy < 0 && !craft.getSinking() && !craft.getType().getBoolProperty(CraftType.USE_GRAVITY)) {
             fail(I18nSupport.getInternationalisedString("Translation - Failed Craft hit minimum height limit"));
             return;
@@ -380,7 +380,7 @@ public class TranslationTask extends AsyncTask {
         BlockData airBlockData = Material.AIR.createBlockData();
             CraftManager.getInstance().removeCraft(craft, CraftReleaseEvent.Reason.EMPTY);
             for(MovecraftLocation location : oldHitBox){
-                BlockData phaseBlock = craft.getPhaseBlocks().getOrDefault(location.toBukkit(craft.getWorld()), airBlockData);
+                BlockData phaseBlock = craft.getPhaseBlocks().getOrDefault(location, airBlockData);
                 updates.add(new BlockCreateCommand(craft.getWorld(), location, phaseBlock));
             }
             newHitBox = new SetHitBox();
