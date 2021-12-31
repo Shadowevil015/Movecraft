@@ -113,7 +113,7 @@ public final class SubcraftRotateSign implements Listener {
                     return new Pair<>(Result.succeed(), new SubCraftImpl(type, w, parent));
                 },
                 world, player,
-                Movecraft.getAdventure().player(player),
+                player,
                 craft -> () -> {
                     Bukkit.getServer().getPluginManager().callEvent(new CraftPilotEvent(craft, CraftPilotEvent.Reason.SUB_CRAFT));
 

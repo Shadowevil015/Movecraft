@@ -16,6 +16,7 @@ import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.processing.functions.Result;
 import net.countercraft.movecraft.util.Pair;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -114,7 +115,7 @@ public final class CraftSign implements Listener {
                     }
                 },
                 world, player,
-                Movecraft.getAdventure().player(player),
+                player,
                 craft -> () -> {
                     Bukkit.getServer().getPluginManager().callEvent(new CraftPilotEvent(craft, CraftPilotEvent.Reason.PLAYER));
                     if (craft.getType().getBoolProperty(CraftType.CRUISE_ON_PILOT)) {

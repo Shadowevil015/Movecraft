@@ -100,15 +100,10 @@ public class TranslationTask extends AsyncTask {
             fail(preTranslateEvent.getFailMessage(), preTranslateEvent.isPlayingFailSound());
             return;
         }
-        if (dx != preTranslateEvent.getDx()) {
-            dx = preTranslateEvent.getDx();
-        }
-        if (dy != preTranslateEvent.getDy()) {
-            dy = preTranslateEvent.getDy();
-        }
-        if (dz != preTranslateEvent.getDz()) {
-            dz = preTranslateEvent.getDz();
-        }
+
+        dx = preTranslateEvent.getDx();
+        dy = preTranslateEvent.getDy();
+        dz = preTranslateEvent.getDz();
         world = preTranslateEvent.getWorld();
 
         final int minY = oldHitBox.getMinY();
