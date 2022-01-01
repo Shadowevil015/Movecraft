@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
@@ -74,6 +75,9 @@ public class IWorldHandler extends WorldHandler {
             BlockEntity tile = removeBlockEntity(nativeWorld,position);
             if(tile == null)
                 continue;
+            if (tile instanceof SignBlockEntity) {
+                tile.setBlockState(tile.getBlockState().rotate(ROTATION[rotation.ordinal()]));
+            }
 //            tile.a(ROTATION[rotation.ordinal()]);
             //get the nextTick to move with the tile
             tiles.add(new TileHolder(tile, tickProvider.getNextTick(nativeWorld,position), position));
