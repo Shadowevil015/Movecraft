@@ -145,7 +145,7 @@ jobs:
         run: cd BuildTools && java -jar BuildTools.jar --rev 1.17.1 --remapped
 
   # Build 1.18.1 NMS
-  caves_1_18_1:
+  caves_1_18:
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 17 # 1.18.1 can only be built with Java 17
@@ -158,18 +158,18 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.m2/repository/org/spigotmc/spigot/1.18.1-R0.1-SNAPSHOT/
+            ~/.m2/repository/org/spigotmc/spigot/1.18-R0.1-SNAPSHOT/
             ~/.m2/repository/org/spigotmc/spigot-parent/
             ~/.m2/repository/org/spigotmc/minecraft-server/
-          key: ${{ runner.os }}-spigot-1.18.1-all
-          restore-keys: ${{ runner.os }}-spigot-1.18.1-all
+          key: ${{ runner.os }}-spigot-1.18-all
+          restore-keys: ${{ runner.os }}-spigot-1.18-all
       - name: Cache Maven packages
         id: cacheMain
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2_1.18.1
-          restore-keys: ${{ runner.os }}-m2_1.18.1
+          key: ${{ runner.os }}-m2_1.18
+          restore-keys: ${{ runner.os }}-m2_1.18
 
       - name: Setup BuildTools
         run: mkdir BuildTools && wget -O BuildTools/BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
