@@ -26,7 +26,6 @@ import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Tags;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Hopper;
@@ -46,8 +45,7 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Attachable;
-
-import java.util.EnumSet;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockListener implements Listener {
 
@@ -55,6 +53,8 @@ public class BlockListener implements Listener {
     public void onBlockBreak(final BlockBreakEvent e) {
         if (Settings.ProtectPilotedCrafts) {
             MovecraftLocation mloc = MathUtils.bukkit2MovecraftLoc(e.getBlock().getLocation());
+            if (e.getBlock().getType() == Material.FIRE)
+                return; // allow players to punch out fire
             for (Craft craft : CraftManager.getInstance().getCraftsInWorld(e.getBlock().getWorld())) {
                 if (craft == null || craft.getDisabled()) {
                     continue;
@@ -67,6 +67,7 @@ public class BlockListener implements Listener {
             }
         }
     }
+        }
 
     // Prevent items from dropping from moving crafts, such as redstone dust from redstone wire.
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
