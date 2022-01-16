@@ -17,6 +17,7 @@
 
 package net.countercraft.movecraft.mapUpdater.update;
 
+import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.util.TeleportUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -90,7 +91,7 @@ public class EntityUpdateCommand extends UpdateCommand {
         }
         //Movecraft.getInstance().getWorldHandler().addPlayerLocation((Player) entity,x,y,z,yaw,pitch);
         Location location = new Location(world, playerLoc.getX() + x, playerLoc.getY() + y, playerLoc.getZ() + z);
-        TeleportUtils.teleport((Player) entity, location, yaw, pitch);
+        Movecraft.getInstance().getWorldHandler().teleportPlayer((Player) entity, location, yaw, pitch);
         if (sound != null) {
             ((Player) entity).playSound(location, sound, volume, 1.0f);
         }
