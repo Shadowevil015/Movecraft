@@ -18,7 +18,7 @@
 package net.countercraft.movecraft;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.factory.bukkit.BukkitPacketEventsBuilder;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import net.countercraft.movecraft.async.AsyncManager;
 import net.countercraft.movecraft.commands.ContactsCommand;
 import net.countercraft.movecraft.commands.CraftInfoCommand;
@@ -273,7 +273,7 @@ public class Movecraft extends JavaPlugin {
         instance = this;
         logger = getLogger();
         saveDefaultConfig();
-        PacketEvents.setAPI(BukkitPacketEventsBuilder.build(this));
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
 
     }

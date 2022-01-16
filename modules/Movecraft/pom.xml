@@ -113,8 +113,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.retrooper.packetevents</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>2.0-16d57cead7-1</version>
+            <artifactId>spigot</artifactId>
+            <version>2.0-f2c0468487-1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

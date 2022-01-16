@@ -67,7 +67,6 @@ public class BlockListener implements Listener {
             }
         }
     }
-        }
 
     // Prevent items from dropping from moving crafts, such as redstone dust from redstone wire.
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

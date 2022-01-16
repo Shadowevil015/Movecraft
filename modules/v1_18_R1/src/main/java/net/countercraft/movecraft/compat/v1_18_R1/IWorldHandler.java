@@ -9,7 +9,10 @@ import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.UnsafeUtils;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.ScheduledTick;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,11 +29,14 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -330,6 +337,67 @@ public class IWorldHandler extends WorldHandler {
                 }
             }
         }.runTaskAsynchronously(plugin);
+    }
+
+    private Field getField(String name) {
+        try {
+            var field = ServerGamePacketListenerImpl.class.getDeclaredField(name);
+            field.setAccessible(true);
+            return field;
+        }
+        catch (NoSuchFieldException ex) {
+            System.out.println("Failed to find field " + name);
+            return null;
+        }
+    }
+
+    private final Field justTeleportedField = getField("justTeleported");
+    private final Field awaitingPositionFromClientField = getField("y");
+    private final Field lastPosXField = getField("lastPosX");
+    private final Field lastPosYField = getField("lastPosY");
+    private final Field lastPosZField = getField("lastPosZ");
+    private final Field awaitingTeleportField = getField("z");
+    private final Field awaitingTeleportTimeField = getField("A");
+    private final Field aboveGroundVehicleTickCountField = getField("E");
+
+    @Override
+    public void teleportPlayer(Player player, Location location, float yaw, float pitch) {
+        ServerPlayer handle = ((CraftPlayer) player).getHandle();
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+
+        if (handle.containerMenu != handle.inventoryMenu) {
+            handle.closeContainer();
+        }
+
+        handle.absMoveTo(x, y, z, handle.getYRot() + yaw, handle.getXRot() + pitch);
+
+        var connection = handle.connection;
+
+        int teleportAwait;
+
+        try {
+            justTeleportedField.set(connection, true);
+            awaitingPositionFromClientField.set(connection, new Vec3(x, y, z));
+            lastPosXField.set(connection, x);
+            lastPosYField.set(connection, y);
+            lastPosZField.set(connection, z);
+
+            teleportAwait = awaitingTeleportField.getInt(connection) + 1;
+            if (teleportAwait == 2147483647) teleportAwait = 0;
+            awaitingTeleportField.set(connection, teleportAwait);
+
+            awaitingTeleportTimeField.set(connection, aboveGroundVehicleTickCountField.get(connection));
+        }
+        catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        var packet = new ClientboundPlayerPositionPacket(x, y, z, yaw, pitch, EnumSet.of(ClientboundPlayerPositionPacket.RelativeArgument.X_ROT, ClientboundPlayerPositionPacket.RelativeArgument.Y_ROT), teleportAwait, false);
+        connection.send(packet);
     }
 
     private boolean isRedstoneComponent(Block block) {
