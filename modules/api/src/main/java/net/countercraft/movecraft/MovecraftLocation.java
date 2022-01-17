@@ -78,11 +78,10 @@ final public class MovecraftLocation implements Comparable<MovecraftLocation>{
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        hash = hash * 31 + x;
-        hash = hash * 31 + y;
-        hash = hash * 31 + z;
-        return hash;
+        int result = x;
+        result = 31 * result + y;
+        result = 31 * result + z;
+        return result;
     }
 
     public MovecraftLocation add(MovecraftLocation l) {
@@ -135,11 +134,11 @@ final public class MovecraftLocation implements Comparable<MovecraftLocation>{
     private static final long BITS_12 = mask(12);
 
     public long pack(){
-        return (x & BITS_26) | ((z & BITS_26) << 26) | (((y & (long) BITS_12) << (26 + 26)));
+        return (x & BITS_26) | ((z & BITS_26) << 26) | (((y & BITS_12) << (26 + 26)));
     }
 
     public static long pack(int x, int y, int z){
-        return (x & BITS_26) | ((z & BITS_26) << 26) | (((y & (long) BITS_12) << (26 + 26)));
+        return (x & BITS_26) | ((z & BITS_26) << 26) | (((y & BITS_12) << (26 + 26)));
     }
 
     @NotNull

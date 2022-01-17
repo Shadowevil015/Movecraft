@@ -161,6 +161,9 @@ public class PlayerListener implements Listener {
     private void clearHighlights(Craft craft, Player player){
         highlights.computeIfAbsent(craft, (c) -> new LinkedList<>());
         var queue = highlights.get(craft);
+        if (queue.isEmpty()) {
+            return;
+        }
         BlockHighlight.removeHighlights(queue, player);
         queue.clear();
     }

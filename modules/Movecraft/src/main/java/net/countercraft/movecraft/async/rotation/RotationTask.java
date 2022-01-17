@@ -289,8 +289,10 @@ public class RotationTask extends AsyncTask {
             }
         }
 
-        //Movecraft.getInstance().getWorldHandler().processLight(w, oldHitBox);
-        //Movecraft.getInstance().getWorldHandler().processLight(w, newHitBox.difference(oldHitBox));
+        // (Zaify) We still need to call this for rotations..
+        // It seems LevelLightEngine#retainData doesn't properly relight blocks on rotations
+        Movecraft.getInstance().getWorldHandler().processLight(w, oldHitBox);
+        Movecraft.getInstance().getWorldHandler().processLight(w, newHitBox.difference(oldHitBox));
     }
 
     public MovecraftLocation getOriginPoint() {

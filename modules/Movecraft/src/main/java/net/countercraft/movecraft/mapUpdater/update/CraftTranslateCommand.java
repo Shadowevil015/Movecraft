@@ -25,15 +25,16 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class CraftTranslateCommand extends UpdateCommand {
+    final MovecraftLocation[] SHIFTS = new MovecraftLocation[]{
+            new MovecraftLocation(0,-1,0),
+            new MovecraftLocation(1,0,0),
+            new MovecraftLocation(-1,0,0),
+            new MovecraftLocation(0,0,1),
+            new MovecraftLocation(0,0,-1)};
+
     @NotNull private final Craft craft;
     @NotNull private final MovecraftLocation displacement;
     @NotNull private final World world;
-
-    public CraftTranslateCommand(@NotNull Craft craft, @NotNull MovecraftLocation displacement){
-        this.craft = craft;
-        this.displacement = displacement;
-        this.world = craft.getWorld();
-    }
 
     public CraftTranslateCommand(@NotNull Craft craft, @NotNull MovecraftLocation displacement, @NotNull World world){
         this.craft = craft;
@@ -121,7 +122,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             for (MovecraftLocation l : failed){
                 MovecraftLocation orig = l.subtract(displacement);
-                if (craft.getHitBox().contains(orig) || failed.contains(orig)){
+                if (failed.contains(orig) || craft.getHitBox().contains(orig)){
                     continue;
                 }
                 confirmed.add(orig);
@@ -143,7 +144,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             }
 
             for(MovecraftLocation location : originalLocations){
-                if(!craft.getHitBox().contains(location) && craft.getPhaseBlocks().containsKey(location)){
+                if (craft.getPhaseBlocks().containsKey(location) && !craft.getHitBox().contains(location)) {
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
                     handler.setBlockFast(location.toBukkit(oldWorld), phaseBlock);
                 }
@@ -174,16 +175,11 @@ public class CraftTranslateCommand extends UpdateCommand {
 
     @NotNull
     private Set<MovecraftLocation> verifyExterior(Set<MovecraftLocation> invertedHitBox, SetHitBox validExterior) {
-        var shifts = new MovecraftLocation[]{new MovecraftLocation(0,-1,0),
-                new MovecraftLocation(1,0,0),
-                new MovecraftLocation(-1,0,0),
-                new MovecraftLocation(0,0,1),
-                new MovecraftLocation(0,0,-1)};
         Set<MovecraftLocation> visited = new LinkedHashSet<>(validExterior.asSet());
         Queue<MovecraftLocation> queue = new ArrayDeque<>();
         for(var node : validExterior){
             //If the node is already a valid member of the exterior of the HitBox, continued search is unitary.
-            for(var shift : shifts){
+            for(var shift : SHIFTS){
                 var shifted = node.add(shift);
                 if(invertedHitBox.contains(shifted) && visited.add(shifted)){
                     queue.add(shifted);
@@ -193,7 +189,7 @@ public class CraftTranslateCommand extends UpdateCommand {
         while (!queue.isEmpty()) {
             var node = queue.poll();
             //If the node is already a valid member of the exterior of the HitBox, continued search is unitary.
-            for(var shift : shifts){
+            for(var shift : SHIFTS){
                 var shifted = node.add(shift);
                 if(invertedHitBox.contains(shifted) && visited.add(shifted)){
                     queue.add(shifted);
