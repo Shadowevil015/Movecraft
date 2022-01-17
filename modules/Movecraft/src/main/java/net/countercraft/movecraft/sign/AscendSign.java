@@ -36,7 +36,6 @@ public class AscendSign implements Listener {
                     sign.setLine(0, "Ascend: OFF");
                     sign.setColor(DyeColor.RED);
                     sign.setGlowingText(true);
-                    sign.update();
                 }
             }
         }

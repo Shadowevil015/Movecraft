@@ -41,7 +41,6 @@ public final class CruiseSign implements Listener{
                     sign.setLine(0, "Cruise: OFF");
                     sign.setColor(DyeColor.RED);
                     sign.setGlowingText(true);
-                    sign.update();
                 }
             }
         }

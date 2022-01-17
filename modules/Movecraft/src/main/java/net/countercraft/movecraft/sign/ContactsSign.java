@@ -36,7 +36,6 @@ public class ContactsSign implements Listener{
                     sign.line(1, Component.empty());
                     sign.line(2, Component.empty());
                     sign.line(3, Component.empty());
-                    sign.update();
                 }
             }
         }

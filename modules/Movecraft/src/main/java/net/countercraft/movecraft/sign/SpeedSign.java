@@ -31,7 +31,6 @@ public final class SpeedSign implements Listener{
                     sign.line(1, Component.text("0 m/s"));
                     sign.line(2, Component.text( "0ms"));
                     sign.line(3, Component.text( "0T"));
-                    sign.update();
                 }
             }
         }

@@ -44,7 +44,6 @@ public final class StatusSign implements Listener{
                     sign.setLine(1, "");
                     sign.setLine(2, "");
                     sign.setLine(3, "");
-                    sign.update();
                 }
             }
         }

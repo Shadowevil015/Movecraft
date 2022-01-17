@@ -268,7 +268,6 @@ public abstract class BaseCraft implements Craft {
                 sign.setColor(DyeColor.GREEN);
                 sign.setGlowingText(true);
             }
-            sign.update();
         }
     }
 

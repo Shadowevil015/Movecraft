@@ -35,7 +35,6 @@ public final class DescendSign implements Listener{
                     sign.setLine(0, "Descend: OFF");
                     sign.setColor(DyeColor.RED);
                     sign.setGlowingText(true);
-                    sign.update();
                 }
             }
         }

@@ -289,8 +289,8 @@ public class RotationTask extends AsyncTask {
             }
         }
 
-        Movecraft.getInstance().getWorldHandler().processLight(w, oldHitBox);
-        Movecraft.getInstance().getWorldHandler().processLight(w, newHitBox.difference(oldHitBox));
+        //Movecraft.getInstance().getWorldHandler().processLight(w, oldHitBox);
+        //Movecraft.getInstance().getWorldHandler().processLight(w, newHitBox.difference(oldHitBox));
     }
 
     public MovecraftLocation getOriginPoint() {
