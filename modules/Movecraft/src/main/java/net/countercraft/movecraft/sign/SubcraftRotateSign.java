@@ -74,7 +74,7 @@ public final class SubcraftRotateSign implements Listener {
                 && ChatColor.stripColor(sign.getLine(3)).equals("")) {
             sign.setLine(2, "_\\ /_");
             sign.setLine(3, "/ \\");
-            sign.update(false, false);
+            //sign.update(false, false);
         }
 
         if (!event.getPlayer().hasPermission("movecraft." + craftTypeStr + ".pilot") || !event.getPlayer().hasPermission("movecraft." + craftTypeStr + ".rotate")) {
@@ -84,17 +84,19 @@ public final class SubcraftRotateSign implements Listener {
 
         Craft playerCraft = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if (playerCraft != null) {
+            /*
             if (!playerCraft.isNotProcessing()) {
                 event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Detection - Parent Craft is busy"));
                 return;
             }
+             */
             playerCraft.setProcessing(true); // prevent the parent craft from moving or updating until the subcraft is done
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     playerCraft.setProcessing(false);
                 }
-            }.runTaskLater(Movecraft.getInstance(), (10));
+            }.runTaskLater(Movecraft.getInstance(), 2L);
         }
 
         rotating.add(startPoint);
