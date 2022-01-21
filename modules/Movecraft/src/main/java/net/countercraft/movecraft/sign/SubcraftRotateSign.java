@@ -3,18 +3,15 @@ package net.countercraft.movecraft.sign;
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.MovecraftRotation;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.SubCraft;
-import net.countercraft.movecraft.craft.SubCraftImpl;
-import net.countercraft.movecraft.craft.SubcraftRotateCraft;
+import net.countercraft.movecraft.craft.*;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftPilotEvent;
+import net.countercraft.movecraft.events.CraftPreTranslateEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
+import net.countercraft.movecraft.events.CraftRotateEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
 import net.countercraft.movecraft.processing.functions.Result;
 import net.countercraft.movecraft.util.Pair;
-import net.countercraft.movecraft.util.hitboxes.MutableHitBox;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -84,12 +81,11 @@ public final class SubcraftRotateSign implements Listener {
 
         Craft playerCraft = CraftManager.getInstance().getCraftByPlayer(event.getPlayer());
         if (playerCraft != null) {
-            /*
             if (!playerCraft.isNotProcessing()) {
                 event.getPlayer().sendMessage(I18nSupport.getInternationalisedString("Detection - Parent Craft is busy"));
                 return;
             }
-             */
+            /*
             playerCraft.setProcessing(true); // prevent the parent craft from moving or updating until the subcraft is done
             new BukkitRunnable() {
                 @Override
@@ -97,6 +93,7 @@ public final class SubcraftRotateSign implements Listener {
                     playerCraft.setProcessing(false);
                 }
             }.runTaskLater(Movecraft.getInstance(), 2L);
+             */
         }
 
         rotating.add(startPoint);
@@ -128,12 +125,14 @@ public final class SubcraftRotateSign implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
+                            craft.setProcessing(true);
                             craft.rotate(rotation, startPoint, true);
                             if (craft instanceof SubCraft) {
                                 Craft parent = ((SubCraft) craft).getParent();
                                 var newHitbox = parent.getHitBox().union(craft.getHitBox());
                                 parent.setHitBox(newHitbox);
                             }
+                            craft.setProcessing(false);
                             CraftManager.getInstance().removeCraft(craft, CraftReleaseEvent.Reason.SUB_CRAFT);
                         }
                     }.runTaskLater(Movecraft.getInstance(), 3);
@@ -146,5 +145,42 @@ public final class SubcraftRotateSign implements Listener {
                 rotating.remove(startPoint);
             }
         }.runTaskLater(Movecraft.getInstance(), 4);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCraftPreTranslate(CraftPreTranslateEvent event) {
+        if (!(event.getCraft() instanceof PlayerCraft)) {
+            return;
+        }
+        var craft = (PlayerCraft) event.getCraft();
+        if (hasProcessingSubcraft(craft)) {
+            event.setCancelled(true);
+            event.setFailMessage("Your craft did not move as one of your subcrafts was still rotating!");
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCraftPreTranslate(CraftRotateEvent event) {
+        if (!(event.getCraft() instanceof PlayerCraft)) {
+            return;
+        }
+        var craft = (PlayerCraft) event.getCraft();
+        if (hasProcessingSubcraft(craft)) {
+            event.setCancelled(true);
+            event.setFailMessage("Your craft did not rotate as one of your subcrafts was still rotating!");
+        }
+    }
+
+    private boolean hasProcessingSubcraft(PlayerCraft parentCraft) {
+        for (Craft testCraft : CraftManager.getInstance().getCraftsInWorld(parentCraft.getWorld())) {
+            if (!(testCraft instanceof SubcraftRotateCraft)) {
+                continue;
+            }
+            SubcraftRotateCraft subcraft = (SubcraftRotateCraft) testCraft;
+            if (!subcraft.isNotProcessing() && subcraft.getPilot() == parentCraft.getPilot()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
