@@ -2,12 +2,8 @@ package net.countercraft.movecraft.commands;
 
 import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.CruiseOnPilotCraft;
-import net.countercraft.movecraft.craft.CruiseOnPilotSubCraft;
+import net.countercraft.movecraft.craft.*;
 import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.craft.PlayerCraftImpl;
 import net.countercraft.movecraft.events.CraftPilotEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.localisation.I18nSupport;
@@ -67,9 +63,19 @@ public class PilotCommand implements TabExecutor {
         CraftManager.getInstance().detect(
                 startPoint,
                 craftType, (type, w, p, parents) -> {
-                    if (parents.size() > 0)
+                    if (parents.size() > 1)
                         return new Pair<>(Result.failWithMessage(I18nSupport.getInternationalisedString(
                                 "Detection - Failed - Already commanding a craft")), null);
+
+                    // CCNet: Let player crafts be piloted inside other crafts by marking them as subcrafts
+                    if (parents.size() == 1 && !type.getBoolProperty(CraftType.CRUISE_ON_PILOT)) {
+                        Craft parent = parents.iterator().next();
+                        if (parent.getType().equals(type) || !type.getBoolProperty(CraftType.CAN_PLAYER_PILOT_INSIDE_ANOTHER_CRAFT)) {
+                            return new Pair<>(Result.failWithMessage(I18nSupport.getInternationalisedString(
+                                    "Detection - Failed - Already commanding a craft")), null);
+                        }
+                        return new Pair<>(Result.succeed(), new PlayerSubCraft(type, world, p, parent));
+                    }
 
                     return new Pair<>(Result.succeed(),
                             new PlayerCraftImpl(type, w, p));
@@ -78,6 +84,15 @@ public class PilotCommand implements TabExecutor {
                 player,
                 craft -> () -> {
                     Bukkit.getServer().getPluginManager().callEvent(new CraftPilotEvent(craft, CraftPilotEvent.Reason.PLAYER));
+
+                    // CCNet: Subtract the hitbox of the new craft from the "parent" craft.
+                    if (craft instanceof PlayerSubCraft) {
+                        Craft parent = ((PlayerSubCraft) craft).getParent();
+                        var newHitbox = parent.getHitBox().difference(craft.getHitBox());;
+                        parent.setHitBox(newHitbox);
+                        parent.setOrigBlockCount(parent.getOrigBlockCount() - craft.getHitBox().size());
+                    }
+
                     // Release old craft if it exists
                     Craft oldCraft = CraftManager.getInstance().getCraftByPlayer(player);
                     if(oldCraft != null)

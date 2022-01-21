@@ -161,6 +161,10 @@ final public class CraftType {
     public static final NamespacedKey GEAR_SHIFTS_AFFECT_DIRECT_MOVEMENT = buildKey("gear_shifts_affect_direct_movement");
     public static final NamespacedKey GEAR_SHIFTS_AFFECT_CRUISE_SKIP_BLOCKS = buildKey("gear_shifts_affect_cruise_skip_blocks");
     public static final NamespacedKey RELEASE_TIMEOUT = buildKey("release_timeout");
+
+    // CCNet:
+    public static final NamespacedKey CAN_PLAYER_PILOT_INSIDE_ANOTHER_CRAFT = buildKey("can_player_pilot_inside_another_craft");
+
     //endregion
 
     @Contract("_ -> new")
@@ -493,6 +497,8 @@ final public class CraftType {
         registerProperty(new BooleanProperty("gearShiftsAffectDirectMovement", GEAR_SHIFTS_AFFECT_DIRECT_MOVEMENT, type -> false));
         registerProperty(new BooleanProperty("gearShiftsAffectCruiseSkipBlocks", GEAR_SHIFTS_AFFECT_CRUISE_SKIP_BLOCKS, type -> false));
         registerProperty(new IntegerProperty("releaseTimeout", RELEASE_TIMEOUT, type -> 30));
+        // CCNet:
+        registerProperty(new BooleanProperty("canPlayerPilotInsideAnotherCraft", CAN_PLAYER_PILOT_INSIDE_ANOTHER_CRAFT, type -> false));
 
         /* Craft type transforms */
         // Convert speed to TICK_COOLDOWN
