@@ -32,7 +32,7 @@ public class ContactsSign implements Listener{
             BlockState state = block.getState(false);
             if(state instanceof Sign){
                 Sign sign = (Sign) state;
-                if (PlainTextComponentSerializer.plainText().serialize(sign.lines().get(0)).contains("Contacts: ")) {
+                if (PlainTextComponentSerializer.plainText().serialize(sign.lines().get(0)).contains("Contacts:")) {
                     sign.line(1, Component.empty());
                     sign.line(2, Component.empty());
                     sign.line(3, Component.empty());

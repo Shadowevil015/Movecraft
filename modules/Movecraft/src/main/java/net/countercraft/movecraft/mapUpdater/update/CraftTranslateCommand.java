@@ -234,6 +234,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 for (int i = 0; i < 4; i++) {
                     sign.line(i, entry.getKey().get(i));
                 }
+                sign.update(false, false);
             }
         }
     }

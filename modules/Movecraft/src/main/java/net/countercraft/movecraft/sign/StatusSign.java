@@ -80,7 +80,6 @@ public final class StatusSign implements Listener{
                 }
             }
         }
-        String fuelText="";
         int cruiseSkipBlocks = (int) craft.getType().getPerWorldProperty(CraftType.PER_WORLD_CRUISE_SKIP_BLOCKS, craft.getWorld());
         cruiseSkipBlocks++;
         double fuelBurnRate = (double) craft.getType().getPerWorldProperty(CraftType.PER_WORLD_FUEL_BURN_RATE, craft.getWorld());
@@ -93,8 +92,7 @@ public final class StatusSign implements Listener{
         } else {
             color = NamedTextColor.RED;
         }
-        fuelText+="Fuel range:";
-        fuelText+=fuelRange;
-        event.setLine(0, Component.text(fuelText, color));
+        String fuelText = "Fuel: " + fuelRange;
+        event.setLine(1, Component.text(fuelText, color));
     }
 }
