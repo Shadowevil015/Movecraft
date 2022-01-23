@@ -125,8 +125,8 @@ public class TranslationTask extends AsyncTask {
 
             for (MovecraftLocation oldLocation : oldHitBox) {
 
-                Location location = oldLocation.translate(dx, dy, dz).toBukkit(craft.getWorld());
-                Block block = craft.getWorld().getBlockAt(location);
+                MovecraftLocation location = oldLocation.translate(dx, dy, dz);
+                Block block = craft.getWorld().getBlockAt(location.getX(), location.getY(), location.getZ());
                 if (block.getType() == Material.NETHER_PORTAL) {
 
                     if (processNetherPortal(block)) {
@@ -742,7 +742,7 @@ public class TranslationTask extends AsyncTask {
                 if(minHeightLimit == translated.translate(0, dropDistance + 1 , 0).getY())
                     hitGround = true; // Don't let the craft fall below the min height limit
                 if(harvestBlocks.contains(testType)
-                        && harvestBladeBlocks.contains(ml.toBukkit(craft.getWorld()).getBlock().getType()))
+                        && harvestBladeBlocks.contains(world.getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getType()))
                     hitGround = false; // Allow gravity to harvest blocks on the way down
 
                 if (hitGround) {

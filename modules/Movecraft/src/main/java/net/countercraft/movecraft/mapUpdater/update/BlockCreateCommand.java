@@ -44,14 +44,14 @@ public class BlockCreateCommand extends UpdateCommand {
         // now do the block updates, move entities when you set the block they are on
         Movecraft.getInstance().getWorldHandler().setBlockFast(world, newBlockLocation, data);
         //craft.incrementBlockUpdates();
-        newBlockLocation.toBukkit(world).getBlock().getState(false).update(false, false);
+        Block block = world.getBlockAt(newBlockLocation.getX(), newBlockLocation.getY(), newBlockLocation.getZ());
+        block.getState(false).update(false, false);
 
         //Do comperator stuff
 
         if (data.getMaterial() == Material.COMPARATOR) { // for some reason comparators are flakey, have to do it twice sometimes
-            Block b = newBlockLocation.toBukkit(world).getBlock();
-            if (b.getType() != Material.COMPARATOR) {
-                b.setType(data.getMaterial(), false);
+            if (block.getType() != Material.COMPARATOR) {
+                block.setType(data.getMaterial(), false);
             }
         }
 

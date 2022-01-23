@@ -71,19 +71,21 @@ public class RotationTask extends AsyncTask {
         this.rotation = rotation;
         this.w = w;
         this.isSubCraft = isSubCraft;
-        this.newHitBox = new SetHitBox();
         this.oldHitBox = new SetHitBox(c.getHitBox());
+        this.newHitBox = new SetHitBox(oldHitBox.size());
         this.oldFluidList = new SetHitBox(c.getFluidLocations());
         this.newFluidList = new SetHitBox(c.getFluidLocations());
     }
 
     public RotationTask(Craft c, MovecraftLocation originPoint, MovecraftRotation rotation, World w) {
         this(c,originPoint,rotation,w,false);
+        Bukkit.broadcastMessage("r");
     }
 
     @Override
     protected void execute() {
 
+        Bukkit.broadcastMessage("a");
         if(oldHitBox.isEmpty())
             return;
 
@@ -94,6 +96,7 @@ public class RotationTask extends AsyncTask {
             Bukkit.getServer().getPluginManager().callEvent(failEvent);
         }
 
+        Bukkit.broadcastMessage("b");
         // check for fuel, burn some from a furnace if needed. Blocks of coal are supported, in addition to coal and charcoal
         if (!checkFuel()) {
             failMessage = I18nSupport.getInternationalisedString("Translation - Failed Craft out of fuel");
@@ -102,6 +105,7 @@ public class RotationTask extends AsyncTask {
             Bukkit.getServer().getPluginManager().callEvent(failEvent);
             return;
         }
+        Bukkit.broadcastMessage("c");
         // if a subcraft, find the parent craft. If not a subcraft, it is it's own parent
         Set<Craft> craftsInWorld = CraftManager.getInstance().getCraftsInWorld(getCraft().getWorld());
         Craft parentCraft = getCraft();
@@ -112,6 +116,7 @@ public class RotationTask extends AsyncTask {
             }
         }
 
+        Bukkit.broadcastMessage("e");
         for(MovecraftLocation originalLocation : oldHitBox){
             MovecraftLocation newLocation = MathUtils.rotateVec(rotation,originalLocation.subtract(originPoint)).add(originPoint);
             newHitBox.add(newLocation);
@@ -175,7 +180,7 @@ public class RotationTask extends AsyncTask {
         }
 
 
-        updates.add(new CraftRotateCommand(getCraft(),originPoint, rotation));
+        updates.add(new CraftRotateCommand(getCraft(),originPoint, rotation, oldHitBox));
         //rotate entities in the craft
         Location tOP = new Location(getCraft().getWorld(), originPoint.getX(), originPoint.getY(), originPoint.getZ());
         tOP.setX(tOP.getBlockX() + 0.5);

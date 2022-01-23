@@ -40,13 +40,15 @@ public class CraftRotateCommand extends UpdateCommand {
     @NotNull
     private final MovecraftLocation originLocation;
     @NotNull private final World world;
+    @NotNull private final HitBox oldHitBox;
 
 
-    public CraftRotateCommand(@NotNull final Craft craft, @NotNull final MovecraftLocation originLocation, @NotNull final MovecraftRotation rotation) {
+    public CraftRotateCommand(@NotNull final Craft craft, @NotNull final MovecraftLocation originLocation, @NotNull final MovecraftRotation rotation, HitBox oldHitBox) {
         this.craft = craft;
         this.rotation = rotation;
         this.originLocation = originLocation;
         this.world = craft.getWorld();
+        this.oldHitBox = oldHitBox;
     }
 
     @Override
@@ -65,13 +67,7 @@ public class CraftRotateCommand extends UpdateCommand {
             passthroughBlocks.addAll(Tags.SINKING_PASSTHROUGH);
         }
         if (!passthroughBlocks.isEmpty()) {
-            SetHitBox originalLocations = new SetHitBox();
-            final MovecraftRotation counterRotation = rotation == MovecraftRotation.CLOCKWISE ? MovecraftRotation.ANTICLOCKWISE : MovecraftRotation.CLOCKWISE;
-            for (MovecraftLocation movecraftLocation : craft.getHitBox()) {
-                originalLocations.add(MathUtils.rotateVec(counterRotation, movecraftLocation.subtract(originLocation)).add(originLocation));
-            }
-
-            final HitBox to = craft.getHitBox().difference(originalLocations);
+            final HitBox to = craft.getHitBox().difference(oldHitBox);
 
             for (MovecraftLocation location : to) {
                 var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
@@ -154,7 +150,7 @@ public class CraftRotateCommand extends UpdateCommand {
                 craft.getPhaseBlocks().remove(location);
             }
 
-            for(MovecraftLocation location : originalLocations.boundingHitBox()){
+            for(MovecraftLocation location : oldHitBox) {
                 if(!craft.getHitBox().inBounds(location) && craft.getPhaseBlocks().containsKey(location)){
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
                     handler.setBlockFast(world, location, phaseBlock);
@@ -167,7 +163,6 @@ public class CraftRotateCommand extends UpdateCommand {
                 if (passthroughBlocks.contains(data.getMaterial())) {
                     craft.getPhaseBlocks().put(location, data);
                     handler.setBlockFast(world, location, airBlockData);
-
                 }
             }
         }else{
