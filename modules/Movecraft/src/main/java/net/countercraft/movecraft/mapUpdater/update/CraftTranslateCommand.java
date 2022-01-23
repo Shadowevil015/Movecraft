@@ -35,11 +35,13 @@ public class CraftTranslateCommand extends UpdateCommand {
     @NotNull private final Craft craft;
     @NotNull private final MovecraftLocation displacement;
     @NotNull private final World world;
+    @NotNull private final HitBox oldHitBox;
 
-    public CraftTranslateCommand(@NotNull Craft craft, @NotNull MovecraftLocation displacement, @NotNull World world){
+    public CraftTranslateCommand(@NotNull Craft craft, @NotNull MovecraftLocation displacement, @NotNull World world, @NotNull HitBox oldHitBox){
         this.craft = craft;
         this.displacement = displacement;
         this.world = world;
+        this.oldHitBox = oldHitBox;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class CraftTranslateCommand extends UpdateCommand {
         }
         long time = System.nanoTime();
         World oldWorld = craft.getWorld();
-        final Set<Material> passthroughBlocks = new HashSet<>(craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS));
+        final EnumSet<Material> passthroughBlocks = craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS);
         if(craft.getSinking()){
             passthroughBlocks.addAll(Tags.FLUID);
             passthroughBlocks.addAll(Tag.LEAVES.getValues());
@@ -65,11 +67,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             //trigger sign events
             this.sendSignEvents();
         } else {
-            SetHitBox originalLocations = new SetHitBox();
-            for (MovecraftLocation movecraftLocation : craft.getHitBox()) {
-                originalLocations.add(movecraftLocation.subtract(displacement));
-            }
-            final Set<MovecraftLocation> to = Sets.difference(craft.getHitBox().asSet(), originalLocations.asSet());
+            final Set<MovecraftLocation> to = Sets.difference(craft.getHitBox().asSet(), oldHitBox.asSet());
             //place phased blocks
             for (MovecraftLocation location : to) {
                 var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
@@ -143,7 +141,7 @@ public class CraftTranslateCommand extends UpdateCommand {
                 handler.setBlockFast(oldWorld, location, phaseBlock);
             }
 
-            for(MovecraftLocation location : originalLocations){
+            for(MovecraftLocation location : oldHitBox) {
                 if (craft.getPhaseBlocks().containsKey(location) && !craft.getHitBox().contains(location)) {
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
                     handler.setBlockFast(oldWorld, location, phaseBlock);
@@ -175,7 +173,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
     @NotNull
     private Set<MovecraftLocation> verifyExterior(Set<MovecraftLocation> invertedHitBox, SetHitBox validExterior) {
-        Set<MovecraftLocation> visited = new LinkedHashSet<>(validExterior.asSet());
+        Set<MovecraftLocation> visited = new HashSet<>(validExterior.asSet());
         Queue<MovecraftLocation> queue = new ArrayDeque<>();
         for(var node : validExterior){
             //If the node is already a valid member of the exterior of the HitBox, continued search is unitary.
