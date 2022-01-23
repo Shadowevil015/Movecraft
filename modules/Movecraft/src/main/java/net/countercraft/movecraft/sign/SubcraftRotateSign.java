@@ -125,14 +125,12 @@ public final class SubcraftRotateSign implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            craft.setProcessing(true);
                             craft.rotate(rotation, startPoint, true);
                             if (craft instanceof SubCraft) {
                                 Craft parent = ((SubCraft) craft).getParent();
                                 var newHitbox = parent.getHitBox().union(craft.getHitBox());
                                 parent.setHitBox(newHitbox);
                             }
-                            craft.setProcessing(false);
                             CraftManager.getInstance().removeCraft(craft, CraftReleaseEvent.Reason.SUB_CRAFT);
                         }
                     }.runTaskLater(Movecraft.getInstance(), 3);
