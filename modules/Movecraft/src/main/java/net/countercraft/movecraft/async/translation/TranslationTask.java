@@ -69,6 +69,7 @@ public class TranslationTask extends AsyncTask {
     private Collection<UpdateCommand> updates = new HashSet<>();
     private Sound sound = null;
     private float volume = 0.0f;
+    private final Set<Material> passthroughBlocks = craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS);
 
     public TranslationTask(Craft c, World world, int dx, int dy, int dz) {
         super(c);
@@ -184,7 +185,7 @@ public class TranslationTask extends AsyncTask {
                 int centreMinY = oldHitBox.getMinYAt(midPoint.getX(), midPoint.getZ());
                 int groundY = centreMinY;
                 World w = craft.getWorld();
-                while (w.getBlockAt(midPoint.getX(), groundY - 1, midPoint.getZ()).getType().isAir() || craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(w.getBlockAt(midPoint.getX(), groundY - 1, midPoint.getZ()).getType())){
+                while (w.getBlockAt(midPoint.getX(), groundY - 1, midPoint.getZ()).getType().isAir() || passthroughBlocks.contains(w.getBlockAt(midPoint.getX(), groundY - 1, midPoint.getZ()).getType())){
                     groundY--;
                 }
                 if (centreMinY - groundY > craft.getType().getIntProperty(CraftType.HOVER_LIMIT)){
@@ -231,15 +232,11 @@ public class TranslationTask extends AsyncTask {
                 newHitBox.add(newLocation);
                 continue;
             }
-            final Material testMaterial = world.getBlockAt(newLocation.getX(), newLocation.getY(), newLocation.getZ()).getType();
+            final Material testMaterial = world.getType(newLocation.getX(), newLocation.getY(), newLocation.getZ());
 
             if (Tags.CHESTS.contains(testMaterial) && checkChests(testMaterial, newLocation)) {
                 //prevent chests collision
                 fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft is obstructed") + " @ %d,%d,%d,%s", newLocation.getX(), newLocation.getY(), newLocation.getZ(), newLocation.toBukkit(craft.getWorld()).getBlock().getType().toString()));
-                return;
-            }
-            if (!withinWorldBorder(world, newLocation)) {
-                fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ()));
                 return;
             }
 
@@ -247,7 +244,7 @@ public class TranslationTask extends AsyncTask {
             if (craft.getSinking()) {
                 blockObstructed = !Tags.FALL_THROUGH_BLOCKS.contains(testMaterial);
             } else {
-                blockObstructed = !craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testMaterial) && !testMaterial.equals(Material.AIR);
+                blockObstructed = !testMaterial.isAir() && !passthroughBlocks.contains(testMaterial);
             }
 
             boolean ignoreBlock = world.getBlockAt(oldLocation.getX(), oldLocation.getY(), oldLocation.getZ()).getType().isAir() && blockObstructed;
@@ -261,8 +258,6 @@ public class TranslationTask extends AsyncTask {
                 }
             }
 
-
-
             if (blockObstructed) {
                 if (!craft.getSinking() && craft.getType().getFloatProperty(CraftType.COLLISION_EXPLOSION) <= 0F) {
                     fail(String.format(I18nSupport.getInternationalisedString("Translation - Failed Craft is obstructed") + " @ %d,%d,%d,%s", newLocation.getX(), newLocation.getY(), newLocation.getZ(), testMaterial.toString()));
@@ -275,6 +270,18 @@ public class TranslationTask extends AsyncTask {
                 }
             } //END OF: if (blockObstructed)
         }
+
+        var corner1 = new MovecraftLocation(newHitBox.getMinX(), 0, newHitBox.getMinZ());
+        var corner2 = new MovecraftLocation(newHitBox.getMaxX(), 0, newHitBox.getMaxZ());
+        if (!withinWorldBorder(world, corner1)) {
+            fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner1.getX(), corner1.getY(), corner1.getZ()));
+            return;
+        }
+        if (!withinWorldBorder(world, corner2)) {
+            fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner2.getX(), corner2.getY(), corner2.getZ()));
+            return;
+        }
+
 
         if (!oldFluidList.isEmpty()) {
             for (MovecraftLocation fluidLoc : oldFluidList) {
@@ -652,13 +659,14 @@ public class TranslationTask extends AsyncTask {
     private MovecraftLocation surfaceLoc(MovecraftLocation ml) {
         MovecraftLocation surfaceLoc = ml;
         Material testType;
+        int maxHeightLimit = (int) craft.getType().getPerWorldProperty(CraftType.PER_WORLD_MAX_HEIGHT_LIMIT, world);
         do {
             surfaceLoc = surfaceLoc.translate(0, 1, 0);
             testType = world.getBlockAt(surfaceLoc.getX(), surfaceLoc.getY(), surfaceLoc.getZ()).getType();
         } while ((!testType.isAir() &&
-                !craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testType) &&
+                !passthroughBlocks.contains(testType) &&
                 !oldHitBox.contains(surfaceLoc)) &&
-                surfaceLoc.getY() + 1 > (int) craft.getType().getPerWorldProperty(CraftType.PER_WORLD_MAX_HEIGHT_LIMIT, craft.getWorld()));
+                surfaceLoc.getY() + 1 > maxHeightLimit);
         return surfaceLoc;
     }
 
@@ -675,13 +683,15 @@ public class TranslationTask extends AsyncTask {
         }
 
         int elevation = 0;
+
+        var harvestBlocks = craft.getType().getMaterialSetProperty(CraftType.HARVEST_BLOCKS);
+        var harvesterBladeBlocks = craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS);
+
         for (MovecraftLocation ml : collisionBox){
             Material testType = world.getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getType();
             MovecraftLocation below = ml.translate(-dx, -dy, -dz);
-            if (testType.isAir() ||
-                    craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testType) ||
-                    (craft.getType().getMaterialSetProperty(CraftType.HARVEST_BLOCKS).contains(testType) &&
-                            craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS).contains(world.getType(below.getX(), below.getY(), below.getZ())))) {
+            if (testType.isAir() || passthroughBlocks.contains(testType) ||
+                    harvestBlocks.contains(testType) && harvesterBladeBlocks.contains(world.getType(below.getX(), below.getY(), below.getZ()))) {
                 continue;
             }
             MovecraftLocation surfaceLoc = surfaceLoc(ml);
@@ -715,7 +725,6 @@ public class TranslationTask extends AsyncTask {
         int dropDistance = 0;
 
         int minHeightLimit = (int) craft.getType().getPerWorldProperty(CraftType.PER_WORLD_MIN_HEIGHT_LIMIT, craft.getWorld());
-        var passthroughBlocks = craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS);
         var harvestBlocks = craft.getType().getMaterialSetProperty(CraftType.HARVEST_BLOCKS);
         var harvestBladeBlocks = craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS);
         do {
@@ -774,7 +783,7 @@ public class TranslationTask extends AsyncTask {
             //If the lowest part of the bottom locs touch the ground, return true anyways
             if (testType.isAir())
                 continue;
-            else if (craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testType))
+            else if (passthroughBlocks.contains(testType))
                 continue;
             else if (craft.getType().getMaterialSetProperty(CraftType.HARVEST_BLOCKS).contains(testType) && craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS).contains(bottomLoc.toBukkit(craft.getWorld()).getBlock().getType()))
                 continue;
@@ -789,7 +798,7 @@ public class TranslationTask extends AsyncTask {
             if (hitBox.contains(beneath) ||
                     bottomLocs.contains(beneath) ||
                     testType.isAir() ||
-                    type.getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testType) ||
+                    passthroughBlocks.contains(testType) ||
                     (type.getMaterialSetProperty(CraftType.HARVEST_BLOCKS).contains(testType) && type.getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS).contains(translatedBottomLoc.translate(-dx, -dy, -dz).toBukkit(craft.getWorld()).getBlock().getType()))){
                 continue;
             }
