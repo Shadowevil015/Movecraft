@@ -74,7 +74,7 @@ public class RotationTask extends AsyncTask {
         this.oldHitBox = new SetHitBox(c.getHitBox());
         this.newHitBox = new SetHitBox(oldHitBox.size());
         this.oldFluidList = new SetHitBox(c.getFluidLocations());
-        this.newFluidList = new SetHitBox(c.getFluidLocations());
+        this.newFluidList = new SetHitBox(c.getFluidLocations().size());
     }
 
     public RotationTask(Craft c, MovecraftLocation originPoint, MovecraftRotation rotation, World w) {
@@ -112,6 +112,7 @@ public class RotationTask extends AsyncTask {
             }
         }
 
+        var passthroughBlocks = craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS);
         for(MovecraftLocation originalLocation : oldHitBox){
             MovecraftLocation newLocation = MathUtils.rotateVec(rotation,originalLocation.subtract(originPoint)).add(originPoint);
             newHitBox.add(newLocation);
@@ -126,16 +127,8 @@ public class RotationTask extends AsyncTask {
                 break;
             }
 
-            if (!withinWorldBorder(craft.getWorld(), newLocation)) {
-                failMessage = I18nSupport.getInternationalisedString("Rotation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", newLocation.getX(), newLocation.getY(), newLocation.getZ());
-                failed = true;
-                CraftFailRotateEvent failEvent = new CraftFailRotateEvent(craft, rotation, originPoint, oldHitBox, newHitBox);
-                Bukkit.getServer().getPluginManager().callEvent(failEvent);
-                return;
-            }
-
             Material newMaterial = w.getType(newLocation.getX(), newLocation.getY(), newLocation.getZ());
-            if (newMaterial.isAir() || (newMaterial == Material.PISTON_HEAD) || craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(newMaterial))
+            if (newMaterial.isAir() || (newMaterial == Material.PISTON_HEAD) || passthroughBlocks.contains(newMaterial))
                 continue;
 
             if (!oldHitBox.contains(newLocation)) {
@@ -145,6 +138,19 @@ public class RotationTask extends AsyncTask {
                 Bukkit.getServer().getPluginManager().callEvent(failEvent);
                 break;
             }
+        }
+
+        var corner1 = new MovecraftLocation(newHitBox.getMinX(), 0, newHitBox.getMinZ());
+        var corner2 = new MovecraftLocation(newHitBox.getMaxX(), 0, newHitBox.getMaxZ());
+        if (!withinWorldBorder(w, corner1)) {
+            failMessage = I18nSupport.getInternationalisedString("Rotation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner1.getX(), corner1.getY(), corner1.getZ());
+            failed = true;
+            return;
+        }
+        if (!withinWorldBorder(w, corner2)) {
+            failMessage = I18nSupport.getInternationalisedString("Rotation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner2.getX(), corner2.getY(), corner2.getZ());
+            failed = true;
+            return;
         }
 
         if (!oldFluidList.isEmpty()) {
