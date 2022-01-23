@@ -79,13 +79,11 @@ public class RotationTask extends AsyncTask {
 
     public RotationTask(Craft c, MovecraftLocation originPoint, MovecraftRotation rotation, World w) {
         this(c,originPoint,rotation,w,false);
-        Bukkit.broadcastMessage("r");
     }
 
     @Override
     protected void execute() {
 
-        Bukkit.broadcastMessage("a");
         if(oldHitBox.isEmpty())
             return;
 
@@ -96,7 +94,6 @@ public class RotationTask extends AsyncTask {
             Bukkit.getServer().getPluginManager().callEvent(failEvent);
         }
 
-        Bukkit.broadcastMessage("b");
         // check for fuel, burn some from a furnace if needed. Blocks of coal are supported, in addition to coal and charcoal
         if (!checkFuel()) {
             failMessage = I18nSupport.getInternationalisedString("Translation - Failed Craft out of fuel");
@@ -105,7 +102,6 @@ public class RotationTask extends AsyncTask {
             Bukkit.getServer().getPluginManager().callEvent(failEvent);
             return;
         }
-        Bukkit.broadcastMessage("c");
         // if a subcraft, find the parent craft. If not a subcraft, it is it's own parent
         Set<Craft> craftsInWorld = CraftManager.getInstance().getCraftsInWorld(getCraft().getWorld());
         Craft parentCraft = getCraft();
@@ -116,7 +112,6 @@ public class RotationTask extends AsyncTask {
             }
         }
 
-        Bukkit.broadcastMessage("e");
         for(MovecraftLocation originalLocation : oldHitBox){
             MovecraftLocation newLocation = MathUtils.rotateVec(rotation,originalLocation.subtract(originPoint)).add(originPoint);
             newHitBox.add(newLocation);

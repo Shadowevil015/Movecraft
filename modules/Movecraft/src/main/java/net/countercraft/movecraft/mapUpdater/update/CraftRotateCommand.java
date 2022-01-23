@@ -150,7 +150,7 @@ public class CraftRotateCommand extends UpdateCommand {
                 craft.getPhaseBlocks().remove(location);
             }
 
-            for(MovecraftLocation location : oldHitBox) {
+            for(MovecraftLocation location : oldHitBox.boundingHitBox()) {
                 if(!craft.getHitBox().inBounds(location) && craft.getPhaseBlocks().containsKey(location)){
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
                     handler.setBlockFast(world, location, phaseBlock);
