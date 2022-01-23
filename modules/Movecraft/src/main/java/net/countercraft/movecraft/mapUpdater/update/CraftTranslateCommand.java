@@ -72,7 +72,7 @@ public class CraftTranslateCommand extends UpdateCommand {
             final Set<MovecraftLocation> to = Sets.difference(craft.getHitBox().asSet(), originalLocations.asSet());
             //place phased blocks
             for (MovecraftLocation location : to) {
-                var data = location.toBukkit(world).getBlock().getBlockData();
+                var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
                 if (passthroughBlocks.contains(data.getMaterial())) {
                     craft.getPhaseBlocks().put(location, data);
                 }
@@ -110,7 +110,7 @@ public class CraftTranslateCommand extends UpdateCommand {
 
             final WorldHandler handler = Movecraft.getInstance().getWorldHandler();
             for (MovecraftLocation location : failed) {
-                var data = location.toBukkit(world).getBlock().getBlockData();
+                var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
                 if (!passthroughBlocks.contains(data.getMaterial())) {
                     continue;
                 }
@@ -139,25 +139,23 @@ public class CraftTranslateCommand extends UpdateCommand {
                 //Do not place if it is at a collapsed HitBox location
                 if (!craft.getCollapsedHitBox().isEmpty() && craft.getCollapsedHitBox().contains(location))
                     continue;
-                Location bukkit = location.toBukkit(craft.getWorld());
                 var phaseBlock = craft.getPhaseBlocks().remove(location);
-                handler.setBlockFast(bukkit, phaseBlock);
-                craft.getPhaseBlocks().remove(location);
+                handler.setBlockFast(oldWorld, location, phaseBlock);
             }
 
             for(MovecraftLocation location : originalLocations){
                 if (craft.getPhaseBlocks().containsKey(location) && !craft.getHitBox().contains(location)) {
                     var phaseBlock = craft.getPhaseBlocks().remove(location);
-                    handler.setBlockFast(location.toBukkit(oldWorld), phaseBlock);
+                    handler.setBlockFast(oldWorld, location, phaseBlock);
                 }
             }
 
+            var airBlockData = Material.AIR.createBlockData();
             for (MovecraftLocation location : failed) {
-                Location bukkit = location.toBukkit(oldWorld);
-                var data = bukkit.getBlock().getBlockData();
+                var data = oldWorld.getBlockData(location.getX(), location.getY(), location.getZ());
                 if (passthroughBlocks.contains(data.getMaterial())) {
                     craft.getPhaseBlocks().put(location, data);
-                    handler.setBlockFast(bukkit, Material.AIR.createBlockData());
+                    handler.setBlockFast(oldWorld, location, airBlockData);
 
                 }
             }
@@ -205,7 +203,10 @@ public class CraftTranslateCommand extends UpdateCommand {
         HashMap<List<Component>, List<MovecraftLocation>> signs = new HashMap<>();
         Map<MovecraftLocation, Sign> signStates = new HashMap<>();
         for (MovecraftLocation location : craft.getHitBox()) {
-            Block block = location.toBukkit(craft.getWorld()).getBlock();
+            Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
+            if (!Tag.SIGNS.isTagged(block.getType())) {
+                continue;
+            }
             BlockState state = block.getState(false);
             if (state instanceof Sign) {
                 Sign sign = (Sign) state;
@@ -223,7 +224,10 @@ public class CraftTranslateCommand extends UpdateCommand {
                 continue;
             }
             for (MovecraftLocation location : entry.getValue()) {
-                Block block = location.toBukkit(craft.getWorld()).getBlock();
+                Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
+                if (!Tag.SIGNS.isTagged(block.getType())) {
+                    continue;
+                }
                 BlockState state = block.getState(false);
                 if (!(state instanceof Sign)) {
                     continue;

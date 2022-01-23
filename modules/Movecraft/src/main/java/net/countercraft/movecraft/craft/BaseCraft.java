@@ -222,7 +222,7 @@ public abstract class BaseCraft implements Craft {
     @Override
     public void resetSigns(@NotNull Sign clicked) {
         for (final MovecraftLocation ml : hitBox) {
-            final Block b = ml.toBukkit(w).getBlock();
+            final Block b = w.getBlockAt(ml.getX(), ml.getY(), ml.getZ());
             if (!Tag.SIGNS.isTagged(b.getType())) {
                 continue;
             }
@@ -403,7 +403,7 @@ public abstract class BaseCraft implements Craft {
 //        Map<Material, Integer> counter = new HashMap<>();
         if (materials.isEmpty()) {
             for (MovecraftLocation location : hitBox) {
-                materials.add(location.toBukkit(w).getBlock().getType());
+                materials.add(w.getType(location.getX(), location.getY(), location.getZ()));
             }
         }
 

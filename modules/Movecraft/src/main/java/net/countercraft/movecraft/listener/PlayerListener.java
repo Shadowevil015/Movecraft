@@ -80,15 +80,14 @@ public class PlayerListener implements Listener {
                 if (craft.getHitBox().contains(test)){
                     continue;
                 }
-                Block testBlock = test.toBukkit(craft.getWorld()).getBlock();
-                Material testMaterial = testBlock.getType();
+                Material testMaterial = craft.getWorld().getType(test.getX(), test.getY(), test.getZ());
                 //Break the loop if an allowed block is found adjacent to the craft's hitbox
                 if (ALLOWED_BLOCKS.contains(testMaterial)){
-                    mergePoints.add(testBlock.getLocation());
+                    mergePoints.add(test.toBukkit(craft.getWorld()));
                 }
                 //Do the same if a forbidden block is found
                 else if (FORBIDDEN_BLOCKS.contains(testMaterial)){
-                    mergePoints.add(testBlock.getLocation());
+                    mergePoints.add(test.toBukkit(craft.getWorld()));
                 }
             }
         }

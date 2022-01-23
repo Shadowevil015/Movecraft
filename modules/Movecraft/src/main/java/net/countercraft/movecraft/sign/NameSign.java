@@ -32,7 +32,7 @@ public final class NameSign implements Listener {
         World w = c.getWorld();
 
         for (MovecraftLocation location : c.getHitBox()) {
-            var block = location.toBukkit(w).getBlock();
+            var block = w.getBlockAt(location.getX(), location.getY(), location.getZ());
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }

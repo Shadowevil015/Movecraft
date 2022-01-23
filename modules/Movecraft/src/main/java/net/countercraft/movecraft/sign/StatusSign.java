@@ -15,6 +15,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -33,7 +34,7 @@ public final class StatusSign implements Listener{
     public void onCraftDetect(CraftDetectEvent event){
         World world = event.getCraft().getWorld();
         for(MovecraftLocation location: event.getCraft().getHitBox()){
-            var block = location.toBukkit(world).getBlock();
+            var block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }
@@ -69,9 +70,9 @@ public final class StatusSign implements Listener{
         }
 
         for (MovecraftLocation ml : craft.getHitBox()) {
-            Material material = craft.getWorld().getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getType();
-            if(Tags.FURNACES.contains(material)) {
-                InventoryHolder inventoryHolder = (InventoryHolder) craft.getWorld().getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getState(false);
+            Block block = craft.getWorld().getBlockAt(ml.getX(), ml.getY(), ml.getZ());
+            if(Tags.FURNACES.contains(block.getType())) {
+                InventoryHolder inventoryHolder = (InventoryHolder) block.getState(false);
                 for (ItemStack iStack : inventoryHolder.getInventory()) {
                     if (iStack == null || !fuelTypes.containsKey(iStack.getType()))
                         continue;

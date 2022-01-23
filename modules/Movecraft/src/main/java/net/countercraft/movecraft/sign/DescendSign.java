@@ -24,7 +24,7 @@ public final class DescendSign implements Listener{
     public void onCraftDetect(CraftDetectEvent event){
         World world = event.getCraft().getWorld();
         for(MovecraftLocation location: event.getCraft().getHitBox()){
-            var block = location.toBukkit(world).getBlock();
+            var block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             if(!Tag.SIGNS.isTagged(block.getType())){
                 continue;
             }

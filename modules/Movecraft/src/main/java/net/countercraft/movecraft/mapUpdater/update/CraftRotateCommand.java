@@ -85,9 +85,9 @@ public class CraftRotateCommand extends UpdateCommand {
             final HitBox to = craft.getHitBox().difference(originalLocations);
 
             for (MovecraftLocation location : to) {
-                Block block = location.toBukkit(craft.getWorld()).getBlock();
-                if (passthroughBlocks.contains(block.getType())) {
-                    craft.getPhaseBlocks().put(location, block.getBlockData());
+                var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
+                if (passthroughBlocks.contains(data.getMaterial())) {
+                    craft.getPhaseBlocks().put(location, data);
                 }
             }
             //The subtraction of the set of coordinates in the HitBox cube and the HitBox itself
@@ -142,7 +142,7 @@ public class CraftRotateCommand extends UpdateCommand {
 
             final WorldHandler handler = Movecraft.getInstance().getWorldHandler();
             for (MovecraftLocation location : invertedHitBox.difference(exterior)) {
-                var data = location.toBukkit(world).getBlock().getBlockData();
+                var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
                 if (!passthroughBlocks.contains(data.getMaterial())) {
                     continue;
                 }
@@ -174,10 +174,9 @@ public class CraftRotateCommand extends UpdateCommand {
 
             BlockData airBlockData = Material.AIR.createBlockData();
             for (MovecraftLocation location : interior) {
-                Location bukkit = location.toBukkit(craft.getWorld());
-                var block = bukkit.getBlock();
-                if (passthroughBlocks.contains(block.getType())) {
-                    craft.getPhaseBlocks().put(location, block.getBlockData());
+                var data = world.getBlockData(location.getX(), location.getY(), location.getZ());
+                if (passthroughBlocks.contains(data.getMaterial())) {
+                    craft.getPhaseBlocks().put(location, data);
                     handler.setBlockFast(world, location, airBlockData);
 
                 }
@@ -201,7 +200,7 @@ public class CraftRotateCommand extends UpdateCommand {
         HashMap<List<Component>, List<MovecraftLocation>> signs = new HashMap<>();
         Map<MovecraftLocation, Sign> signStates = new HashMap<>();
         for (MovecraftLocation location : craft.getHitBox()) {
-            Block block = location.toBukkit(craft.getWorld()).getBlock();
+            var block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             if (!Tag.SIGNS.isTagged(block.getType())) {
                 continue;
             }
@@ -222,7 +221,10 @@ public class CraftRotateCommand extends UpdateCommand {
                 continue;
             }
             for (MovecraftLocation location : entry.getValue()) {
-                Block block = location.toBukkit(craft.getWorld()).getBlock();
+                Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
+                if (!Tag.SIGNS.isTagged(block.getType())) {
+                    continue;
+                }
                 BlockState state = block.getState(false);
                 if (!(state instanceof Sign)) {
                     continue;

@@ -116,7 +116,7 @@ public class RotationTask extends AsyncTask {
             MovecraftLocation newLocation = MathUtils.rotateVec(rotation,originalLocation.subtract(originPoint)).add(originPoint);
             newHitBox.add(newLocation);
 
-            Material oldMaterial = originalLocation.toBukkit(w).getBlock().getType();
+            Material oldMaterial = w.getType(originalLocation.getX(), originalLocation.getY(), originalLocation.getZ());
             //prevent chests collision
             if (Tags.CHESTS.contains(oldMaterial) && !checkChests(oldMaterial, newLocation)) {
                 failed = true;
@@ -134,7 +134,7 @@ public class RotationTask extends AsyncTask {
                 return;
             }
 
-            Material newMaterial = newLocation.toBukkit(w).getBlock().getType();
+            Material newMaterial = w.getType(newLocation.getX(), newLocation.getY(), newLocation.getZ());
             if (newMaterial.isAir() || (newMaterial == Material.PISTON_HEAD) || craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(newMaterial))
                 continue;
 

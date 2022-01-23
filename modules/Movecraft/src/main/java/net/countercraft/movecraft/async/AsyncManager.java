@@ -422,13 +422,13 @@ public class AsyncManager extends BukkitRunnable {
                 if (fadedBlocks >= maxFadeBlocks) {
                     break;
                 }
-                final Location bLoc = location.toBukkit(world);
-                if ((Settings.FadeWrecksAfter + Settings.ExtraFadeTimePerBlock.getOrDefault(bLoc.getBlock().getType(), 0))* 1000 > System.currentTimeMillis() - entry.getValue()) {
+                Material type = world.getType(location.getX(), location.getY(), location.getZ());
+                if ((Settings.FadeWrecksAfter + Settings.ExtraFadeTimePerBlock.getOrDefault(type, 0))* 1000L > System.currentTimeMillis() - entry.getValue()) {
                     continue;
                 }
                 fadedBlocks++;
                 processedFadeLocs.get(world).add(location);
-                BlockData phaseBlock = phaseBlocks.getOrDefault(bLoc, airBlockData);
+                BlockData phaseBlock = phaseBlocks.getOrDefault(location, airBlockData);
                 commands.add(new BlockCreateCommand(world, location, phaseBlock));
                 
             }
@@ -591,7 +591,7 @@ public class AsyncManager extends BukkitRunnable {
         int totalNonNegligibleBlocks = 0;
         int totalNonNegligibleWaterBlocks = 0;
         for (MovecraftLocation l : craft.getHitBox()) {
-            Material type = craft.getWorld().getBlockAt(l.getX(), l.getY(), l.getZ()).getType();
+            Material type = craft.getWorld().getType(l.getX(), l.getY(), l.getZ());
             for(RequiredBlockEntry entry : flyBlocks.getKeySet()) {
                 if(entry.contains(type))
                     flyBlocks.add(entry);
