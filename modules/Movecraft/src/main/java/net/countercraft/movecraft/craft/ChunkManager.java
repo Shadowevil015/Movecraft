@@ -4,6 +4,7 @@ import net.countercraft.movecraft.Movecraft;
 import net.countercraft.movecraft.MovecraftChunk;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.config.Settings;
+import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -77,6 +78,35 @@ public class ChunkManager implements Listener {
 
         }
 
+        return chunks;
+    }
+
+    public static Set<MovecraftChunk> getChunks(HitBox oldHitBox, World world, int dx, int dy, int dz) {
+        var boundingHitBox = oldHitBox.boundingHitBox();
+        MovecraftLocation corner1 = new MovecraftLocation(boundingHitBox.getMinX() + dx, 0, boundingHitBox.getMinZ() + dz);
+        MovecraftLocation corner2 = new MovecraftLocation(boundingHitBox.getMaxX() + dx, 0, boundingHitBox.getMaxZ() + dz);
+
+        Set<MovecraftChunk> chunks = new HashSet<>();
+        int minX = Math.min(corner1.getX(), corner2.getX());
+        int maxX = Math.max(corner1.getX(), corner2.getX());
+        int minZ = Math.min(corner1.getZ(), corner2.getZ());
+        int maxZ = Math.max(corner1.getZ(), corner2.getZ());
+        for (int x = minX; x < maxX; x = x + 16) {
+            for (int z = minZ; z < maxZ; z = z + 16) {
+                int chunkX = x / 16;
+                if (x < 0) {
+                    chunkX--;
+                }
+
+                int chunkZ = z / 16;
+                if (z < 0) {
+                    chunkZ--;
+                }
+
+                MovecraftChunk chunk = new MovecraftChunk(chunkX, chunkZ, world);
+                chunks.add(chunk);
+            }
+        }
         return chunks;
     }
     

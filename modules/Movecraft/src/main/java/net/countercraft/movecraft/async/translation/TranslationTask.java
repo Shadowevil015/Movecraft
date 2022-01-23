@@ -145,7 +145,7 @@ public class TranslationTask extends AsyncTask {
         // !world.equals(craft.getW()) || Math.abs(dx) + oldHitBox.getXLength() >=
         // (Bukkit.getServer().getViewDistance() - 1) * 16 || Math.abs(dz) +
         // oldHitBox.getZLength() >= (Bukkit.getServer().getViewDistance() - 1) * 16
-        Set<MovecraftChunk> chunksToLoad = ChunkManager.getChunks(oldHitBox, craft.getWorld());
+        Set<MovecraftChunk> chunksToLoad = ChunkManager.getChunks(oldHitBox, craft.getWorld(), 0, 0, 0);
         chunksToLoad.addAll(ChunkManager.getChunks(oldHitBox, world, dx, dy, dz));
         MovecraftChunk.addSurroundingChunks(chunksToLoad, 1);
         ChunkManager.checkChunks(chunksToLoad);
@@ -335,9 +335,9 @@ public class TranslationTask extends AsyncTask {
                     if (System.currentTimeMillis() - craft.getOrigPilotTime() <= 1000) {
                         continue;
                     }
-                    Location loc = location.toBukkit(craft.getWorld());
-                    if (!loc.getBlock().getType().isAir() && ThreadLocalRandom.current().nextDouble(1) < .05) {
-                        updates.add(new ExplosionUpdateCommand( loc, craft.getType().getFloatProperty(CraftType.EXPLODE_ON_CRASH)));
+                    Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
+                    if (!block.getType().isAir() && ThreadLocalRandom.current().nextDouble(1) < .05) {
+                        updates.add(new ExplosionUpdateCommand(block.getLocation(), craft.getType().getFloatProperty(CraftType.EXPLODE_ON_CRASH)));
                         collisionExplosion = true;
                     }
                 }
@@ -360,9 +360,9 @@ public class TranslationTask extends AsyncTask {
                 /*if (location.getY() < waterLine) { // underwater explosions require more force to do anything
                     explosionForce += 25;//TODO: find the correct amount
                 }*/
-                Location oldLocation = location.translate(-dx,-dy,-dz).toBukkit(craft.getWorld());
+                MovecraftLocation oldLocation = location.translate(-dx,-dy,-dz);
                 Location newLocation = location.toBukkit(world);
-                if (!oldLocation.getBlock().getType().isAir()) {
+                if (!world.getType(oldLocation.getX(), oldLocation.getY(), oldLocation.getZ()).isAir()) {
                     CraftCollisionExplosionEvent e = new CraftCollisionExplosionEvent(craft, newLocation, craft.getWorld());
                     Bukkit.getServer().getPluginManager().callEvent(e);
                     if(!e.isCancelled()) {
@@ -390,7 +390,7 @@ public class TranslationTask extends AsyncTask {
             Bukkit.getServer().getPluginManager().callEvent(new CraftCollisionEvent(craft, collisionBox, world));
         }
 
-        updates.add(new CraftTranslateCommand(craft, new MovecraftLocation(dx, dy, dz), world));
+        updates.add(new CraftTranslateCommand(craft, new MovecraftLocation(dx, dy, dz), world, oldHitBox));
 
         //prevents torpedo and rocket pilots
         if (craft.getType().getBoolProperty(CraftType.MOVE_ENTITIES) && !(craft.getSinking() && craft.getType().getBoolProperty(CraftType.ONLY_MOVE_PLAYERS))) {
@@ -677,10 +677,11 @@ public class TranslationTask extends AsyncTask {
         int elevation = 0;
         for (MovecraftLocation ml : collisionBox){
             Material testType = world.getBlockAt(ml.getX(), ml.getY(), ml.getZ()).getType();
+            MovecraftLocation below = ml.translate(-dx, -dy, -dz);
             if (testType.isAir() ||
                     craft.getType().getMaterialSetProperty(CraftType.PASSTHROUGH_BLOCKS).contains(testType) ||
                     (craft.getType().getMaterialSetProperty(CraftType.HARVEST_BLOCKS).contains(testType) &&
-                            craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS).contains(ml.translate(-dx, -dy, -dz).toBukkit(craft.getWorld()).getBlock().getType()))) {
+                            craft.getType().getMaterialSetProperty(CraftType.HARVESTER_BLADE_BLOCKS).contains(world.getType(below.getX(), below.getY(), below.getZ())))) {
                 continue;
             }
             MovecraftLocation surfaceLoc = surfaceLoc(ml);
