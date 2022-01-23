@@ -50,6 +50,9 @@ public class ContactsSign implements Listener{
         }
         int signLine=1;
         for(Craft tcraft : craft.getContacts()) {
+            if (tcraft.getSinking()) {
+                continue;
+            }
             MovecraftLocation center = craft.getHitBox().getMidPoint();
             MovecraftLocation tcenter = tcraft.getHitBox().getMidPoint();
             int distsquared= center.distanceSquared(tcenter);
@@ -58,6 +61,7 @@ public class ContactsSign implements Listener{
             if(notification.length()>9) {
                 notification = notification.substring(0, 7);
             }
+            int distance = (int) Math.sqrt(distsquared);
             notification += " " + (int)Math.sqrt(distsquared);
             int diffx=center.getX() - tcenter.getX();
             int diffz=center.getZ() - tcenter.getZ();
@@ -74,7 +78,20 @@ public class ContactsSign implements Listener{
                     notification+=" N";
                 }
             }
-            lines.set(signLine++, Component.text(notification, NamedTextColor.BLUE));
+            NamedTextColor color;
+            if (distance >= 1000) {
+                color = NamedTextColor.GREEN;
+            }
+            else if (distance > 500) {
+                color = NamedTextColor.YELLOW;
+            }
+            else if (distance > 200) {
+                color = NamedTextColor.GOLD;
+            }
+            else {
+                color = NamedTextColor.RED;
+            }
+            lines.set(signLine++, Component.text(notification, color));
             if (signLine >= 4) {
                 break;
             }
