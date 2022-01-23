@@ -77,8 +77,8 @@ public class TranslationTask extends AsyncTask {
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
-        newHitBox = new SetHitBox();
         oldHitBox = c.getHitBox();
+        newHitBox = new SetHitBox(oldHitBox.size());
         oldFluidList = new SetHitBox(c.getFluidLocations());
         newFluidList = new SetHitBox();
     }
@@ -232,7 +232,7 @@ public class TranslationTask extends AsyncTask {
                 newHitBox.add(newLocation);
                 continue;
             }
-            final Material testMaterial = world.getType(newLocation.getX(), newLocation.getY(), newLocation.getZ());
+            final Material testMaterial = world.getBlockAt(newLocation.getX(), newLocation.getY(), newLocation.getZ()).getType();
 
             if (Tags.CHESTS.contains(testMaterial) && checkChests(testMaterial, newLocation)) {
                 //prevent chests collision

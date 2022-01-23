@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class SetHitBox implements MutableHitBox{
-    private final Set<MovecraftLocation> locations = new LinkedHashSet<>();
+    private final Set<MovecraftLocation> locations;
     private final Long2IntMap localMinY;
     private boolean invalidateBounds = false;
     private int minX = Integer.MAX_VALUE;
@@ -28,18 +28,26 @@ public class SetHitBox implements MutableHitBox{
 
     public SetHitBox() {
         localMinY = new Long2IntOpenHashMap();
+        this.locations = new LinkedHashSet<>();
     }
 
     public SetHitBox(HitBox box){
-        this();
-        Consumer<MovecraftLocation> consumer =  locations::add;
+        localMinY = new Long2IntOpenHashMap();
+        this.locations = new LinkedHashSet<>(box.size());
+        Consumer<MovecraftLocation> consumer = locations::add;
         box.forEach(consumer.andThen(this::checkBounds));
     }
 
     public SetHitBox(Collection<MovecraftLocation> locations){
-        this();
+        localMinY = new Long2IntOpenHashMap();
+        this.locations = new LinkedHashSet<>(locations.size());
         Consumer<MovecraftLocation> consumer =  this.locations::add;
         locations.forEach(consumer.andThen(this::checkBounds));
+    }
+
+    public SetHitBox(int initialCapacity) {
+        localMinY = new Long2IntOpenHashMap();
+        this.locations = new LinkedHashSet<>(initialCapacity);
     }
 
     @Override
