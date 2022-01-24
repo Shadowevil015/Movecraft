@@ -460,6 +460,10 @@ public class AsyncManager extends BukkitRunnable {
                         recentContactTracking.put(ccraft, new HashMap<>());
                     }
                     for (Craft tcraft : ccraft.getContacts()) {
+                        // CCNet: Do not send contacts notifications for sinking crafts
+                        if (tcraft.getSinking()) {
+                            continue;
+                        }
                         MovecraftLocation ccenter = ccraft.getHitBox().getMidPoint();
                         MovecraftLocation tcenter = tcraft.getHitBox().getMidPoint();
                         int diffx = ccenter.getX() - tcenter.getX();
