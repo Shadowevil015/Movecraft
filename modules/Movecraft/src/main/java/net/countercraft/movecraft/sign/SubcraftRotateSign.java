@@ -158,7 +158,7 @@ public final class SubcraftRotateSign implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onCraftPreTranslate(CraftRotateEvent event) {
+    public void onCraftRotate(CraftRotateEvent event) {
         if (!(event.getCraft() instanceof PlayerCraft)) {
             return;
         }
@@ -171,11 +171,11 @@ public final class SubcraftRotateSign implements Listener {
 
     private boolean hasProcessingSubcraft(PlayerCraft parentCraft) {
         for (Craft testCraft : CraftManager.getInstance().getCraftsInWorld(parentCraft.getWorld())) {
-            if (!(testCraft instanceof SubcraftRotateCraft)) {
+            if (!(testCraft instanceof SubCraftImpl)) {
                 continue;
             }
-            SubcraftRotateCraft subcraft = (SubcraftRotateCraft) testCraft;
-            if (!subcraft.isNotProcessing() && subcraft.getPilot() == parentCraft.getPilot()) {
+            SubCraftImpl subcraft = (SubCraftImpl) testCraft;
+            if (!subcraft.isNotProcessing() && subcraft.getParent() == parentCraft) {
                 return true;
             }
         }
