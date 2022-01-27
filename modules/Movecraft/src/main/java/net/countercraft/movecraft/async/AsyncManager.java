@@ -617,8 +617,11 @@ public class AsyncManager extends BukkitRunnable {
         // are below the threshold specified in sinkPercent
         double sinkPercent = craft.getType().getDoubleProperty(CraftType.SINK_PERCENT) / 100.0;
         for(RequiredBlockEntry entry : flyBlocks.getKeySet()) {
-            if(!entry.check(flyBlocks.get(entry), totalNonNegligibleBlocks, sinkPercent))
-                isSinking = true;
+            if(!entry.check(flyBlocks.get(entry), totalNonNegligibleBlocks, sinkPercent)) {
+                if (entry.getMin() != 0) { // CCNet
+                    isSinking = true;
+                }
+            }
         }
         for(RequiredBlockEntry entry : moveBlocks.getKeySet()) {
             if(!entry.check(moveBlocks.get(entry), totalNonNegligibleBlocks, sinkPercent))
