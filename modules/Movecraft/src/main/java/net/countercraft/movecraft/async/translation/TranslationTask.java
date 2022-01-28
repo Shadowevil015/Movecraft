@@ -424,6 +424,12 @@ public class TranslationTask extends AsyncTask {
             if (!craft.getType().getBoolProperty(CraftType.CRUISE_ON_PILOT) && !craft.getSinking())  // not necessary to release cruiseonpilot crafts, because they will already be released
                 CraftManager.getInstance().addReleaseTask(craft);
         }
+
+        // CCNet: Release sunken crafts once they have settled
+        if (craft.getSinking() && newHitBox.isEmpty()) {
+            CraftManager.getInstance().addReleaseTask(craft);
+        }
+
         captureYield(harvestedBlocks);
 
         Movecraft.getInstance().getWorldHandler().processLight(world, oldHitBox);
