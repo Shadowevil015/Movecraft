@@ -271,17 +271,18 @@ public class TranslationTask extends AsyncTask {
             } //END OF: if (blockObstructed)
         }
 
-        var corner1 = new MovecraftLocation(newHitBox.getMinX(), 0, newHitBox.getMinZ());
-        var corner2 = new MovecraftLocation(newHitBox.getMaxX(), 0, newHitBox.getMaxZ());
-        if (!withinWorldBorder(world, corner1)) {
-            fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner1.getX(), corner1.getY(), corner1.getZ()));
-            return;
+        if (!newHitBox.isEmpty()) {
+            var corner1 = new MovecraftLocation(newHitBox.getMinX(), 0, newHitBox.getMinZ());
+            var corner2 = new MovecraftLocation(newHitBox.getMaxX(), 0, newHitBox.getMaxZ());
+            if (!withinWorldBorder(world, corner1)) {
+                fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner1.getX(), corner1.getY(), corner1.getZ()));
+                return;
+            }
+            if (!withinWorldBorder(world, corner2)) {
+                fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner2.getX(), corner2.getY(), corner2.getZ()));
+                return;
+            }
         }
-        if (!withinWorldBorder(world, corner2)) {
-            fail(I18nSupport.getInternationalisedString("Translation - Failed Craft cannot pass world border") + String.format(" @ %d,%d,%d", corner2.getX(), corner2.getY(), corner2.getZ()));
-            return;
-        }
-
 
         if (!oldFluidList.isEmpty()) {
             for (MovecraftLocation fluidLoc : oldFluidList) {
